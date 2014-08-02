@@ -1,5 +1,11 @@
 package com.elevenware.ioc.container;
 
+import com.elevenware.ioc.EventListener;
+import com.elevenware.ioc.beans.BeanDefinition;
+import com.elevenware.ioc.beans.DefaultBeanDefinition;
+import com.elevenware.ioc.visitors.BeanDefinitionVisitor;
+import com.elevenware.ioc.visitors.Visitors;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,8 +14,8 @@ import java.util.Map;
 public class SimpleIocContainer implements IocContainer {
 
     private boolean started = false;
-    private List<Class> registeredTypes;
-    private Map<Class, Object> context;
+    private List<BeanDefinition> registeredTypes;
+    private Map<Class, BeanDefinition> context;
 
     public SimpleIocContainer() {
         registeredTypes = new ArrayList<>();
@@ -18,13 +24,15 @@ public class SimpleIocContainer implements IocContainer {
 
     @Override
     public void register(Class clazz) {
-        registeredTypes.add(clazz);
+        BeanDefinition definition = new DefaultBeanDefinition(clazz);
+        registeredTypes.add(definition);
     }
 
     @Override
     public <T> T find(Class<T> clazz) {
         checkStarted();
-        return (T) context.get(clazz);
+        BeanDefinition definition = context.get(clazz);
+        return (T) definition.getPayload();
     }
 
     private void checkStarted() {
@@ -35,16 +43,21 @@ public class SimpleIocContainer implements IocContainer {
 
     @Override
     public void start() {
-        for(Class clazz: registeredTypes) {
-            try {
-                Object object = clazz.newInstance();
-                context.put(clazz, object);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
+        instantiateEasyBeans();
+        instantiateBeansWithDependencies();
         started = true;
+    }
+
+    private void instantiateBeansWithDependencies() {
+        Visitors.constructorArgsInstantiator(this.context).visitAll(this.registeredTypes);
+    }
+
+    private void instantiateEasyBeans() {
+        Visitors.simpleTypeInstantiator(new EventListener<BeanDefinition>() {
+            @Override
+            public void doNotify(BeanDefinition event) {
+                SimpleIocContainer.this.context.put(event.getType(), event);
+            }
+        }).visitAll(registeredTypes);
     }
 }
