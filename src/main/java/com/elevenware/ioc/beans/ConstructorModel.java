@@ -21,12 +21,7 @@ public class ConstructorModel {
     }
 
     public boolean hasConstructorFor(List<Object> constructorArgs) {
-        for(Constructor constructor: constructors) {
-            if (isSuitable(constructor, constructorArgs)) {
-                return true;
-            }
-        }
-        return false;
+        return findConstructorFor(constructorArgs) != null;
     }
 
     private boolean isSuitable(Constructor constructor, List<Object> constructorArgs) {
