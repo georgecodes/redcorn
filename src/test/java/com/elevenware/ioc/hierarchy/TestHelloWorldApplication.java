@@ -1,7 +1,8 @@
 package com.elevenware.ioc.hierarchy;
 
+import com.elevenware.ioc.container.ConstructorInjectionIocContainer;
 import com.elevenware.ioc.container.IocContainer;
-import com.elevenware.ioc.container.SimpleIocContainer;
+
 import static  org.junit.Assert.*;
 import org.junit.Test;
 
@@ -10,7 +11,7 @@ public class TestHelloWorldApplication {
     @Test
     public void canSayHelloByBeingConfiguredUsingIoCContainer() {
 
-        IocContainer container = new SimpleIocContainer();
+        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(HelloWorldApplication.class);
         container.register(HelloWorldMessageProducerImpl.class);
         container.register(MessageFactoryImpl.class);

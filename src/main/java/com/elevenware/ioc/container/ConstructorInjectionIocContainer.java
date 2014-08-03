@@ -1,11 +1,9 @@
 package com.elevenware.ioc.container;
 
-import ch.qos.logback.classic.Logger;
 import com.elevenware.ioc.DependencyInstantiationOrdering;
-import com.elevenware.ioc.EventListener;
+import com.elevenware.ioc.Lifecycle;
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.DefaultBeanDefinition;
-import com.elevenware.ioc.visitors.BeanDefinitionVisitor;
 import com.elevenware.ioc.visitors.Visitors;
 import org.slf4j.LoggerFactory;
 
@@ -14,32 +12,39 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SimpleIocContainer implements IocContainer {
+public class ConstructorInjectionIocContainer implements IocContainer {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(SimpleIocContainer.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ConstructorInjectionIocContainer.class);
 
     private boolean started = false;
     private List<BeanDefinition> registeredTypes;
     private Map<Class, BeanDefinition> context;
 
-    public SimpleIocContainer() {
+    public ConstructorInjectionIocContainer() {
         registeredTypes = new ArrayList<>();
         context = new HashMap<>();
         log.trace("Container created - " + this);
     }
 
     @Override
-    public void register(Class clazz) {
-        BeanDefinition definition = new DefaultBeanDefinition(clazz);
-        registeredTypes.add(definition);
-        log.trace("Registered bean defintion for " + clazz);
+    public <T> T find(Class<T> clazz) {
+        checkStarted();
+        for(Class superType: context.keySet()) {
+            if(clazz.isAssignableFrom(superType)) {
+                clazz = superType;
+            }
+
+        }
+         BeanDefinition definition = context.get(clazz);
+        return (T) definition.getPayload();
     }
 
     @Override
-    public <T> T find(Class<T> clazz) {
-        checkStarted();
-        BeanDefinition definition = context.get(clazz);
-        return (T) definition.getPayload();
+    public void register(Class concreteType) {
+
+        BeanDefinition definition = new DefaultBeanDefinition(concreteType);
+        registeredTypes.add(definition);
+        log.trace("Registered bean defintion for " + concreteType);
     }
 
     private void checkStarted() {
@@ -54,26 +59,16 @@ public class SimpleIocContainer implements IocContainer {
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
         Visitors.constructorArgsInstantiator(context).visitAll(dependencyChain);
-//        instantiateEasyBeans();
-//        instantiateBeansWithDependencies();
         if(this.context.isEmpty()) {
             throw new RuntimeException("No beans configured");
+        }
+        for(BeanDefinition definition: context.values()) {
+            if(Lifecycle.class.isAssignableFrom(definition.getType())) {
+                Lifecycle lifecycle = (Lifecycle) definition.getPayload();
+                lifecycle.start();
+            }
         }
         started = true;
     }
 
-    private void instantiateBeansWithDependencies() {
-        Visitors.constructorArgsInstantiator(this.context).visitAll(this.registeredTypes);
-    }
-
-    private void instantiateEasyBeans() {
-        Visitors.simpleTypeInstantiator(new EventListener<BeanDefinition>() {
-            @Override
-            public void doNotify(BeanDefinition event) {
-                log.trace("Bean Definition " + event + " instantiated and registered in context");
-                SimpleIocContainer.this.context.put(event.getType(), event);
-                event.markResolved();
-            }
-        }).visitAll(registeredTypes);
-    }
 }

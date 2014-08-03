@@ -15,9 +15,9 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private ConstructorModel constructorModel;
     private boolean reolved;
 
-    public DefaultBeanDefinition(Class clazz) {
-        this.type = clazz;
-        this.constructorModel = new ConstructorModel(clazz);
+    public DefaultBeanDefinition(Class concreteClass) {
+        this.type = concreteClass;
+        this.constructorModel = new ConstructorModel(concreteClass);
         this.constructorArgs = new ArrayList<>();
     }
 

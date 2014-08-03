@@ -1,6 +1,6 @@
 package com.elevenware.ioc;
 
-public class SimpleBean {
+public class SimpleBean implements Simple {
     private String name;
 
     public String getName() {
