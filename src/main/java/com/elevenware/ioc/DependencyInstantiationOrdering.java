@@ -19,7 +19,7 @@ public class DependencyInstantiationOrdering {
         List<Holder> constructors  = new ArrayList<>();
         for(BeanDefinition bean: beans) {
             ConstructorModel model = bean.getConstructorModel();
-            constructors.add(new Holder(model.findBestConstructorsForTypes(allTypes), bean));
+            constructors.add(new Holder(model.findBestConstructorsForTypes(allTypes, bean.getConstructorArgs()), bean));
         }
         return constructors;
     }
@@ -44,7 +44,7 @@ public class DependencyInstantiationOrdering {
                 i = 0;
             }
             Holder holder = holders.get(i);
-            if(holder.bean.getConstructorModel().findBestConstructorsForTypes(currentlyReady) != null) {
+            if(holder.bean.getConstructorModel().findBestConstructorsForTypes(currentlyReady, holder.bean.getConstructorArgs()) != null) {
                 sortedBeans.add(holder.bean);
                 holders.remove(i);
             }
@@ -55,7 +55,7 @@ public class DependencyInstantiationOrdering {
 
     private void assertAllSatisfiable(List<BeanDefinition> beans, List<Class<?>> allTypes) {
         for(BeanDefinition bean: beans) {
-            Constructor best = bean.getConstructorModel().findBestConstructorsForTypes(allTypes);
+            Constructor best = bean.getConstructorModel().findBestConstructorsForTypes(allTypes, bean.getConstructorArgs());
             if(best == null) {
                 throw new RuntimeException("Could never satisfy dependencies for " + bean);
             }

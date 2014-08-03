@@ -13,7 +13,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private final List<Object> constructorArgs;
     private Object payload;
     private ConstructorModel constructorModel;
-    private boolean reolved;
+    private boolean resolved;
 
     public DefaultBeanDefinition(Class concreteClass) {
         this.type = concreteClass;
@@ -53,8 +53,9 @@ public class DefaultBeanDefinition implements BeanDefinition {
     }
 
     @Override
-    public void addContructorArg(Object object) {
+    public BeanDefinition addContructorArg(Object object) {
         this.constructorArgs.add(object);
+        return this;
     }
 
     @Override
@@ -74,12 +75,12 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     @Override
     public void markResolved() {
-        this.reolved = true;
+        this.resolved = true;
     }
 
     @Override
     public boolean isResolved() {
-        return reolved;
+        return resolved;
     }
 
     public String toString() {

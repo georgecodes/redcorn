@@ -5,6 +5,7 @@ import com.elevenware.ioc.SimpleBean;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,7 +58,17 @@ public class TestConstructorModel {
         assertEquals(3, constructors.getParameterTypes().length);
     }
 
-
+    @Test
+    public void includeProvidedConstructorArgs() {
+        List<Class<?>> classes = new ArrayList<>();
+        classes.add(SimpleBean.class);
+        classes.add(List.class);
+        ConstructorModel model = new ConstructorModel(DependentBean.class);
+        List<Object> args = new ArrayList<>();
+        args.add("hello");
+        Constructor constructors = model.findBestConstructorsForTypes(classes, args);
+        assertEquals(2, constructors.getParameterTypes().length);
+    }
 
 
 }

@@ -82,11 +82,21 @@ public class ConstructorModel {
     }
 
     public Constructor findBestConstructorsForTypes(List<Class<?>> classes) {
-        List<Constructor> candidateConstructors = findConstructorsForTypes(classes);
+        return findBestConstructorsForTypes(classes, Collections.emptyList());
+    }
+
+
+        public Constructor findBestConstructorsForTypes(List<Class<?>> classes, List<Object> args) {
+        List<Class<?>> actualClasses = new ArrayList<>(classes);
+        for(Object object: args) {
+            actualClasses.add(object.getClass());
+        }
+        List<Constructor> candidateConstructors = findConstructorsForTypes(actualClasses);
         if(candidateConstructors.isEmpty()) {
             return null;
         }
         Collections.sort(candidateConstructors, SORT_BY_ARGS);
         return candidateConstructors.get(0);
     }
+
 }

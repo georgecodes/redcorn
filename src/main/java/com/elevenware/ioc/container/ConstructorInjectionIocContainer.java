@@ -33,18 +33,18 @@ public class ConstructorInjectionIocContainer implements IocContainer {
             if(clazz.isAssignableFrom(superType)) {
                 clazz = superType;
             }
-
         }
          BeanDefinition definition = context.get(clazz);
         return (T) definition.getPayload();
     }
 
     @Override
-    public void register(Class concreteType) {
+    public BeanDefinition register(Class concreteType) {
 
         BeanDefinition definition = new DefaultBeanDefinition(concreteType);
         registeredTypes.add(definition);
         log.trace("Registered bean defintion for " + concreteType);
+        return definition;
     }
 
     private void checkStarted() {

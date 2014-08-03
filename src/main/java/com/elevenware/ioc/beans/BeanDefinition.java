@@ -55,7 +55,7 @@ public interface BeanDefinition {
      *
      * @param object - the instance for configuration
      */
-    void addContructorArg(Object object);
+    BeanDefinition addContructorArg(Object object);
 
     /**
      * Returns the list of constructor arguments configured.

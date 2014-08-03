@@ -41,7 +41,7 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                 for(BeanDefinition dependency: existing.values()) {
                     types.add(dependency.getType());
                 }
-                Constructor best = model.findBestConstructorsForTypes(types);
+                Constructor best = model.findBestConstructorsForTypes(types, definition.getConstructorArgs());
                 if( best != null ) {
                     for(Class type: best.getParameterTypes()) {
                         for(Map.Entry<Class, BeanDefinition> def: existing.entrySet()) {
