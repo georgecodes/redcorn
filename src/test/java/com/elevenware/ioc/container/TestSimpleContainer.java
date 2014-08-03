@@ -47,7 +47,7 @@ public class TestSimpleContainer {
     }
 
     @Test (expected = RuntimeException.class)
-    public void throwsExceptionIfNoConstructorFound() {
+    public void throwsExceptionIfNoBeansConfigured() {
 
         IocContainer container = new SimpleIocContainer();
         container.register(DependentBean.class);

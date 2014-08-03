@@ -61,13 +61,13 @@ public class ConstructorModel {
                 constructorList.add(constructor);
             }
         }
-        if(constructorList.isEmpty()) {
-            throw new RuntimeException("Could not find any suitable constructor on " + type  + " for " + classes);
-        }
         return constructorList;
     }
 
     private boolean hasAllTypes(Constructor constructor, List<Class<?>> classes) {
+        if(constructor.getParameterTypes().length == 0) {
+            return true;
+        }
         boolean allMatched = false;
         for(Class constructorArgType: constructor.getParameterTypes()) {
             boolean thisOneMatches = false;
@@ -83,6 +83,9 @@ public class ConstructorModel {
 
     public Constructor findBestConstructorsForTypes(List<Class<?>> classes) {
         List<Constructor> candidateConstructors = findConstructorsForTypes(classes);
+        if(candidateConstructors.isEmpty()) {
+            return null;
+        }
         Collections.sort(candidateConstructors, SORT_BY_ARGS);
         return candidateConstructors.get(0);
     }

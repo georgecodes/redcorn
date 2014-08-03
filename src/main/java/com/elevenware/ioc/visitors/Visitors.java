@@ -3,14 +3,18 @@ package com.elevenware.ioc.visitors;
 import com.elevenware.ioc.EventListener;
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.ConstructorModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public abstract class Visitors implements BeanDefinitionVisitor {
+
+    private static final Logger log = LoggerFactory.getLogger(Visitors.class);
+
     public static BeanDefinitionVisitor simpleTypeInstantiator(final EventListener<BeanDefinition> listener) {
         return new Visitors() {
             @Override

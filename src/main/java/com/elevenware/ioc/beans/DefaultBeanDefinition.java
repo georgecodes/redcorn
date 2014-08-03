@@ -81,4 +81,9 @@ public class DefaultBeanDefinition implements BeanDefinition {
     public boolean isResolved() {
         return reolved;
     }
+
+    public String toString() {
+        return new StringBuilder(super.toString()).append(" for ")
+                .append(this.getType()).toString();
+    }
 }
