@@ -17,4 +17,7 @@ public interface BeanDefinition {
     void accept(BeanDefinitionVisitor visitor);
 
     ConstructorModel getConstructorModel();
+
+    void markResolved();
+    boolean isResolved();
 }

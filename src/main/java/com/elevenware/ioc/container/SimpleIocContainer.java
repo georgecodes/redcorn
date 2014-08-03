@@ -57,6 +57,7 @@ public class SimpleIocContainer implements IocContainer {
             @Override
             public void doNotify(BeanDefinition event) {
                 SimpleIocContainer.this.context.put(event.getType(), event);
+                event.markResolved();
             }
         }).visitAll(registeredTypes);
     }

@@ -11,9 +11,11 @@ public class ConstructorModel {
             return Integer.compare(o2.getParameterTypes().length, o1.getParameterTypes().length);
         }
     };
+    private final Class type;
     private List<Constructor> constructors;
 
     public ConstructorModel(Class clazz) {
+        this.type = clazz;
        constructors = new ArrayList<>();
        for(Constructor constructor: clazz.getDeclaredConstructors()) {
             constructors.add(constructor);
@@ -59,16 +61,24 @@ public class ConstructorModel {
                 constructorList.add(constructor);
             }
         }
+        if(constructorList.isEmpty()) {
+            throw new RuntimeException("Could not find any suitable constructor on " + type  + " for " + classes);
+        }
         return constructorList;
     }
 
     private boolean hasAllTypes(Constructor constructor, List<Class<?>> classes) {
+        boolean allMatched = false;
         for(Class constructorArgType: constructor.getParameterTypes()) {
-            if(!classes.contains(constructorArgType)) {
-                return false;
+            boolean thisOneMatches = false;
+            for(Class argType: classes) {
+                if(constructorArgType.isAssignableFrom(argType)) {
+                    thisOneMatches = true;
+                }
             }
+            allMatched = thisOneMatches;
         }
-        return true;
+        return allMatched;
     }
 
     public Constructor findBestConstructorsForTypes(List<Class<?>> classes) {

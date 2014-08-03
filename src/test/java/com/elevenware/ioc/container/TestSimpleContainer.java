@@ -2,6 +2,9 @@ package com.elevenware.ioc.container;
 
 import com.elevenware.ioc.DependentBean;
 import com.elevenware.ioc.SimpleBean;
+import com.elevenware.ioc.hierarchy.MessageFactory;
+import com.elevenware.ioc.hierarchy.MessageFactoryImpl;
+import com.elevenware.ioc.hierarchy.MessageProducerImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -43,7 +46,27 @@ public class TestSimpleContainer {
 
     }
 
+    @Test (expected = RuntimeException.class)
+    public void throwsExceptionIfNoConstructorFound() {
 
+        IocContainer container = new SimpleIocContainer();
+        container.register(DependentBean.class);
+        container.start();
+
+    }
+
+    @Test
+    public void polymorphism() {
+
+
+        IocContainer container = new SimpleIocContainer();
+        container.register(MessageFactoryImpl.class);
+        container.register(MessageProducerImpl.class);
+        container.start();
+
+        MessageFactory factory = container.find(MessageFactoryImpl.class);
+        assertNotNull(factory);
+    }
 
 
 

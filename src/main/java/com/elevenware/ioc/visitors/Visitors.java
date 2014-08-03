@@ -28,6 +28,9 @@ public abstract class Visitors implements BeanDefinitionVisitor {
         return new Visitors() {
             @Override
             public void visit(BeanDefinition definition) {
+                if(definition.isResolved()) {
+                    return;
+                }
                ConstructorModel model = definition.getConstructorModel();
 
                 List<Class<?>> types = new ArrayList<>();
@@ -37,7 +40,11 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                 Constructor best = model.findBestConstructorsForTypes(types);
                 if( best != null ) {
                     for(Class type: best.getParameterTypes()) {
-                        definition.addContructorArg(existing.get(type).getPayload());
+                        for(Map.Entry<Class, BeanDefinition> def: existing.entrySet()) {
+                            if(type.isAssignableFrom(def.getKey())) {
+                                definition.addContructorArg(def.getValue().getPayload());
+                            }
+                        }
                     }
                     definition.instantiate();
                     existing.put(definition.getType(), definition);
