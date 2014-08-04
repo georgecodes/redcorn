@@ -48,7 +48,7 @@ public interface BeanDefinition {
     Object getPayload();
 
     /**
-     * Adds a constructor argument to this bean definition. The container will attempt to find
+     * Adds a constructor argument to this bean definition. The container will attempt to get
      * a constructor for <bold>all</bold> of the arguments defined in a bean. The container will
      * look for constructors whose types are <i>assignable</i> from the types of arguments,
      * not their exact class.

@@ -24,7 +24,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     }
 
     @Override
-    public <T> T find(Class<T> clazz) {
+    public <T> T get(Class<T> clazz) {
         checkStarted();
         BeanDefinition definition = context.get(clazz.getCanonicalName());
         if(definition != null) {
@@ -40,8 +40,12 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     }
 
     @Override
-    public <T> T find(String id) {
+    public <T> T get(String id) {
         checkStarted();
+        BeanDefinition defintion = context.get(id);
+        if(defintion == null) {
+            return null;
+        }
         return (T) context.get(id).getPayload();
     }
 
@@ -61,6 +65,24 @@ public class ConstructorInjectionIocContainer implements IocContainer {
         registeredTypes.add(definition);
         log.trace("Registered bean defintion for " + clazz);
         return definition;
+    }
+
+    @Override
+    public <T> T find(String name) {
+        Object object = get(name);
+        if(object == null) {
+            throw new BeanNotFoundException(name);
+        }
+        return (T) object;
+    }
+
+    @Override
+    public <T> T find(Class clazz) {
+        Object object = get(clazz);
+        if(object == null) {
+            throw new BeanNotFoundException(clazz.getCanonicalName());
+        }
+        return (T) object;
     }
 
     @Override

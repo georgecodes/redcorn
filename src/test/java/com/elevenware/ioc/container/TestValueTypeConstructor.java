@@ -19,7 +19,7 @@ public class TestValueTypeConstructor {
 
         container.start();
 
-        DependentBean bean = container.find(DependentBean.class);
+        DependentBean bean = container.get(DependentBean.class);
         assertNotNull(bean);
 
         assertEquals("hello", bean.getMessage());
@@ -37,7 +37,7 @@ public class TestValueTypeConstructor {
 
         container.start();
 
-        MultipleOfSame bean = container.find(MultipleOfSame.class);
+        MultipleOfSame bean = container.get(MultipleOfSame.class);
         assertNotNull(bean);
 
         assertEquals("hello", bean.getFirst());

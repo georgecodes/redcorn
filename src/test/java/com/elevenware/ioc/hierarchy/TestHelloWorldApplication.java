@@ -18,7 +18,7 @@ public class TestHelloWorldApplication {
 
         container.start();
 
-        HelloWorldApplication app = container.find(HelloWorldApplication.class);
+        HelloWorldApplication app = container.get(HelloWorldApplication.class);
         assertNotNull(app);
         assertEquals("Hello, world!", app.getMessage());
 

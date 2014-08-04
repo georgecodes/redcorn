@@ -11,14 +11,14 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestConstructorInjection {
+public class TestConstructorInjectionContainer {
 
     @Test( expected = ContainerNotStartedException.class )
     public void cannotGetBeanUntilContainerStarted() {
 
         IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
-        container.find(SimpleBean.class);
+        container.get(SimpleBean.class);
 
     }
 
@@ -28,7 +28,7 @@ public class TestConstructorInjection {
         IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
         container.start();
-        SimpleBean bean = container.find(SimpleBean.class);
+        SimpleBean bean = container.get(SimpleBean.class);
 
         assertNotNull(bean);
 
@@ -42,7 +42,7 @@ public class TestConstructorInjection {
         container.register(DependentBean.class);
         container.start();
 
-        DependentBean bean = container.find(DependentBean.class);
+        DependentBean bean = container.get(DependentBean.class);
         assertNotNull(bean);
         assertNotNull(bean.getSimpleBean());
 
@@ -65,7 +65,7 @@ public class TestConstructorInjection {
         container.register(MessageProducerImpl.class);
         container.start();
 
-        MessageFactory factory = container.find(MessageFactoryImpl.class);
+        MessageFactory factory = container.get(MessageFactoryImpl.class);
         assertNotNull(factory);
     }
 
@@ -76,7 +76,7 @@ public class TestConstructorInjection {
         container.register(StartableBean.class);
         container.start();
 
-        StartableBean bean = container.find(StartableBean.class);
+        StartableBean bean = container.get(StartableBean.class);
         assertTrue(bean.isStarted());
 
     }
@@ -89,7 +89,7 @@ public class TestConstructorInjection {
 
         container.start();
 
-        Simple bean = container.find(Simple.class);
+        Simple bean = container.get(Simple.class);
         assertNotNull(bean);
 
     }
@@ -102,7 +102,7 @@ public class TestConstructorInjection {
 
         container.start();
 
-        SimpleBean bean = container.find(SimpleBean.class.getCanonicalName());
+        SimpleBean bean = container.get(SimpleBean.class.getCanonicalName());
         assertNotNull(bean);
 
     }
@@ -114,12 +114,52 @@ public class TestConstructorInjection {
         container.register("simple", SimpleBean.class);
         container.start();
 
-        SimpleBean bean = container.find("simple");
+        SimpleBean bean = container.get("simple");
         assertNotNull(bean);
 
     }
 
 
+    @Test
+    public void returnsNullIfCannotGetBeanByName() {
 
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("simple", SimpleBean.class);
+        container.start();
+
+        assertNull(container.get("non-existent"));
+
+    }
+
+    @Test( expected = BeanNotFoundException.class)
+    public void throwsExceptionIfCannotFindBeanByName() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("simple", SimpleBean.class);
+        container.start();
+        container.find("non-existent");
+
+    }
+
+    @Test
+    public void returnsNullIfCannotGetBeanByClass() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("simple", SimpleBean.class);
+        container.start();
+
+        assertNull(container.get(Runnable.class));
+
+    }
+
+    @Test( expected = BeanNotFoundException.class)
+    public void throwsExceptionIfCannotFindBeanByClass() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("simple", SimpleBean.class);
+        container.start();
+        container.find(Iterable.class);
+
+    }
 
 }
