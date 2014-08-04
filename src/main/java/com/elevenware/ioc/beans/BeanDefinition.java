@@ -90,4 +90,7 @@ public interface BeanDefinition {
      void markResolved();
 
     String getName();
+
+    BeanDefinition addConstructorRef(String reference);
+    List<String> getConstructorRefs();
 }

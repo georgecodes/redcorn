@@ -4,16 +4,23 @@ import com.elevenware.ioc.*;
 import com.elevenware.ioc.hierarchy.MessageFactory;
 import com.elevenware.ioc.hierarchy.MessageFactoryImpl;
 import com.elevenware.ioc.hierarchy.MessageProducerImpl;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class TestConstructorInjectionContainer {
 
+    private IocContainer container;
+
+    @Before
+    public void setup() {
+        this.container = new ConstructorInjectionIocContainer();
+    }
+
     @Test( expected = ContainerNotStartedException.class )
     public void cannotGetBeanUntilContainerStarted() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
         container.get(SimpleBean.class);
 
@@ -22,7 +29,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canGetBeanOnceContainerStarted() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
         container.start();
         SimpleBean bean = container.get(SimpleBean.class);
@@ -34,7 +40,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void autoConstructorInjection() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
         container.register(DependentBean.class);
         container.start();
@@ -48,7 +53,6 @@ public class TestConstructorInjectionContainer {
     @Test (expected = RuntimeException.class)
     public void throwsExceptionIfNoBeansConfigured() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(DependentBean.class);
         container.start();
 
@@ -57,7 +61,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void polymorphism() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(MessageFactoryImpl.class);
         container.register(MessageProducerImpl.class);
         container.start();
@@ -69,7 +72,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void lifecycleMaintenance() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(StartableBean.class);
         container.start();
 
@@ -81,7 +83,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canFindBySupertype() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
 
         container.start();
@@ -94,7 +95,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canFindBeanByName() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register(SimpleBean.class);
 
         container.start();
@@ -107,7 +107,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canRegisterByName() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("simple", SimpleBean.class);
         container.start();
 
@@ -120,7 +119,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void returnsNullIfCannotGetBeanByName() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("simple", SimpleBean.class);
         container.start();
 
@@ -131,7 +129,6 @@ public class TestConstructorInjectionContainer {
     @Test( expected = BeanNotFoundException.class)
     public void throwsExceptionIfCannotFindBeanByName() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("simple", SimpleBean.class);
         container.start();
         container.find("non-existent");
@@ -141,7 +138,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void returnsNullIfCannotGetBeanByClass() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("simple", SimpleBean.class);
         container.start();
 
@@ -152,7 +148,6 @@ public class TestConstructorInjectionContainer {
     @Test( expected = BeanNotFoundException.class)
     public void throwsExceptionIfCannotFindBeanByClass() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("simple", SimpleBean.class);
         container.start();
         container.find(Iterable.class);
@@ -162,7 +157,6 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canRegisterMoreThanOneBeanOfType() {
 
-        IocContainer container = new ConstructorInjectionIocContainer();
         container.register("first", NamedBean.class).addContructorArg("first bean");
         container.register("second", NamedBean.class).addContructorArg("second bean");
 
@@ -178,7 +172,7 @@ public class TestConstructorInjectionContainer {
 
     @Test
     public void registeringByClassAgainOverwritesFirstBean() {
-        IocContainer container = new ConstructorInjectionIocContainer();
+
         container.register(NamedBean.class).addContructorArg("first bean");
         container.register(NamedBean.class).addContructorArg("second bean");
 
@@ -187,6 +181,33 @@ public class TestConstructorInjectionContainer {
         NamedBean bean = container.find(NamedBean.class);
 
         assertEquals("second bean", bean.getName());
+
+    }
+
+    @Test( expected = RuntimeException.class)
+    public void throwsExceptionIfAmbiguousConstructorArgs() {
+
+        container.register("first", NamedBean.class).addContructorArg("first bean");
+        container.register("second", NamedBean.class).addContructorArg("second bean");
+        container.register(HasNamedBeanArg.class);
+
+        container.start();
+
+    }
+
+    @Test
+    public void canGiveNamedConstructorArgs() {
+
+        container.register("first", NamedBean.class).addContructorArg("first bean");
+        container.register("second", NamedBean.class).addContructorArg("second bean");
+        container.register(HasNamedBeanArg.class).addConstructorRef("second");
+
+        container.start();
+
+        HasNamedBeanArg bean = container.get(HasNamedBeanArg.class);
+        assertNotNull(bean);
+
+        assertEquals("second bean", bean.getBean().getName());
 
     }
 

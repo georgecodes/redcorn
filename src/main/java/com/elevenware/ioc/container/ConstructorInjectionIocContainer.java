@@ -99,6 +99,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     @Override
     public void start() {
         log.trace("Starting container " + this);
+//        Visitors.referenceConstructorArgs(this).visitAll(this.registeredTypes);
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
         Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);

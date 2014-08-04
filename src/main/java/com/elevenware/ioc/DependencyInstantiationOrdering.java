@@ -37,20 +37,47 @@ public class DependencyInstantiationOrdering {
         List<BeanDefinition> sortedBeans = new ArrayList<>();
         assertAllSatisfiable(beans, allTypes);
         List<Holder> holders = getGreedyConstructorsFrom(beans, allTypes);
+        for(int i = 0;i < holders.size(); i++ ) {
+            Holder holder = holders.get(i);
+            if(holder.bean.canInstantiate()) {
+                sortedBeans.add(holder.bean);
+                holders.remove(i);
+            }
+        }
+        // look up named constructor refs
         int i = 0;
+
         while(!holders.isEmpty()) {
             List<Class<?>> currentlyReady = getTypesFrom(sortedBeans);
             if( i >= holders.size() ) {
                 i = 0;
             }
             Holder holder = holders.get(i);
-            if(holder.bean.getConstructorModel().findBestConstructorsForTypes(currentlyReady, holder.bean.getConstructorArgs()) != null) {
+            if(holder.bean.getConstructorModel().findBestConstructorsForTypes(currentlyReady, holder.bean.getConstructorArgs() ) != null || holder.bean.canInstantiate()) {
                 sortedBeans.add(holder.bean);
                 holders.remove(i);
             }
             i++;
         }
         return sortedBeans;
+    }
+
+    private boolean inSorted(String ref, List<BeanDefinition> sortedBeans) {
+        for(BeanDefinition def: sortedBeans) {
+            if(def.getName().equals(ref)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean namedConstructorsLeft(List<Holder> holders) {
+        for(Holder holder: holders) {
+            if(holder.bean.getConstructorRefs().size() > 0) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void assertAllSatisfiable(List<BeanDefinition> beans, List<Class<?>> allTypes) {

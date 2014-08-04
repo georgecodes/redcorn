@@ -11,6 +11,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     private final Class type;
     private final List<Object> constructorArgs;
+    private final List<String> namedConstructorRefs;
     private Object payload;
     private ConstructorModel constructorModel;
     private boolean resolved;
@@ -25,6 +26,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.name = name;
         this.constructorModel = new ConstructorModel(clazz);
         this.constructorArgs = new ArrayList<>();
+        this.namedConstructorRefs = new ArrayList<>();
     }
 
     @Override
@@ -87,6 +89,17 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public BeanDefinition addConstructorRef(String reference) {
+        this.namedConstructorRefs.add(reference);
+        return this;
+    }
+
+    @Override
+    public List<String> getConstructorRefs() {
+        return namedConstructorRefs;
     }
 
     @Override
