@@ -211,5 +211,16 @@ public class TestConstructorInjectionContainer {
 
     }
 
+    @Test
+    public void populatesProperties() {
+
+        container.register(SimpleBean.class).addProperty("name", "this is injected");
+        container.start();
+        SimpleBean bean = container.find(SimpleBean.class);
+        assertNotNull(bean);
+        assertEquals("this is injected", bean.getName());
+
+    }
+
 
 }
