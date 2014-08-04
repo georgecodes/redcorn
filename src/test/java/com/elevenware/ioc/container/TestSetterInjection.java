@@ -48,7 +48,7 @@ public class TestSetterInjection {
         assertEquals(273.39f, all.getTheFloat(), 2);
         assertEquals('x', all.getTheChar());
         assertEquals("Hello", all.getTheString());
-        
+
     }
 
 
