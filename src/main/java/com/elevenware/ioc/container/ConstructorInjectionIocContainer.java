@@ -86,6 +86,15 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     }
 
     @Override
+    public IocContainer createChild() {
+        IocContainer child = new ConstructorInjectionIocContainer();
+        for(BeanDefinition bean: this.context.values()) {
+            child.addDefinition(bean);
+        }
+        return child;
+    }
+
+    @Override
     public BeanDefinition register(Class concreteType) {
         return register(concreteType.getCanonicalName(), concreteType);
     }

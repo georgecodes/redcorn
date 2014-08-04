@@ -14,4 +14,6 @@ public interface IocContainer extends Lifecycle {
     BeanDefinition register(String name, Class clazz);
     <T> T find(String name);
     <T> T find(Class clazz);
+
+    IocContainer createChild();
 }
