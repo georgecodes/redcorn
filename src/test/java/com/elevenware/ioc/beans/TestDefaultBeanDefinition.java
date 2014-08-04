@@ -2,6 +2,9 @@ package com.elevenware.ioc.beans;
 
 import com.elevenware.ioc.DependentBean;
 import com.elevenware.ioc.SimpleBean;
+import com.elevenware.ioc.hierarchy.FooHandler;
+import com.elevenware.ioc.hierarchy.Helper;
+import com.elevenware.ioc.hierarchy.Worker;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -40,6 +43,23 @@ public class TestDefaultBeanDefinition {
 
         BeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         assertEquals(DependentBean.class.getCanonicalName(), definition.getName());
+
+    }
+
+    @Test
+    public void multipleConstructorRefsAreResolved() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(FooHandler.class)
+                .addConstructorRef("worker")
+                .addConstructorRef("helper");
+
+        definition.addContructorArg(new Worker())
+                .addContructorArg(new Helper());
+
+        definition.instantiate();
+
+        assertNotNull(definition.getPayload());
+
 
     }
 

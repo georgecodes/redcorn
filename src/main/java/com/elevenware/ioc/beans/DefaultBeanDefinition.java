@@ -181,7 +181,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     }
 
     public String toString() {
-        return new StringBuilder(super.toString()).append(" for ")
+        return new StringBuilder("definition for ")
                 .append(this.getType()).toString();
     }
 }

@@ -41,7 +41,11 @@ public class ConstructorModel {
 
     public void assertHasConstructorFor(List<Object> constructorArgs) {
         if(!hasConstructorFor(constructorArgs)) {
-            throw new RuntimeException();
+            StringBuilder buf = new StringBuilder("Unable to resolve constructor for type ")
+                    .append(this.type)
+                    .append(" and arguments ")
+                    .append(constructorArgs);
+            throw new RuntimeException(buf.toString());
         }
     }
 

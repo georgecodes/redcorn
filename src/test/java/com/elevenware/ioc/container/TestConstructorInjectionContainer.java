@@ -1,9 +1,7 @@
 package com.elevenware.ioc.container;
 
 import com.elevenware.ioc.*;
-import com.elevenware.ioc.hierarchy.MessageFactory;
-import com.elevenware.ioc.hierarchy.MessageFactoryImpl;
-import com.elevenware.ioc.hierarchy.MessageProducerImpl;
+import com.elevenware.ioc.hierarchy.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -219,6 +217,28 @@ public class TestConstructorInjectionContainer {
         SimpleBean bean = container.find(SimpleBean.class);
         assertNotNull(bean);
         assertEquals("this is injected", bean.getName());
+
+    }
+
+    @Test
+    public void resolvesMultipleConstructorRefs() {
+
+        container.register("foo", FooHandler.class)
+                .addConstructorRef("worker")
+                .addConstructorRef("helper");
+
+        container.register("worker", Worker.class);
+        container.register("helper", Helper.class);
+
+        container.start();
+
+        FooHandler handler = container.find("foo");
+
+        assertNotNull(handler);
+
+        assertNotNull(handler.getWorker());
+        assertNotNull(handler.getHelper());
+
 
     }
 
