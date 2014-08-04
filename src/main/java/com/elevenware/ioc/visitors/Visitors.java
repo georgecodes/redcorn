@@ -63,7 +63,6 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                         for(BeanDefinition def: existing.getBeanDefinitions()) {
                             if(type.isAssignableFrom(def.getType())) {
                                 potential.add(def);
-//                                definition.addContructorArg(def.getPayload());
                             }
                         }
                         switch(potential.size()) {

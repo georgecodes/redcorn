@@ -2,10 +2,16 @@ package com.elevenware.ioc.beans;
 
 import com.elevenware.ioc.visitors.BeanDefinitionVisitor;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultBeanDefinition implements BeanDefinition {
 
@@ -16,6 +22,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private ConstructorModel constructorModel;
     private boolean resolved;
     private String name;
+    private Map<String, Object> properties;
 
     public DefaultBeanDefinition(Class concreteClass) {
        this(concreteClass, concreteClass.getCanonicalName());
@@ -27,6 +34,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.constructorModel = new ConstructorModel(clazz);
         this.constructorArgs = new ArrayList<>();
         this.namedConstructorRefs = new ArrayList<>();
+        this.properties = new HashMap<>();
     }
 
     @Override
@@ -35,6 +43,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         Constructor constructor = constructorModel.findConstructorFor(constructorArgs);
         try {
             payload = constructor.newInstance(constructorArgs.toArray());
+            hydratePayload();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -43,6 +52,42 @@ public class DefaultBeanDefinition implements BeanDefinition {
             e.printStackTrace();
         }
 
+    }
+
+    private void hydratePayload() {
+        try {
+            BeanInfo info = Introspector.getBeanInfo(payload.getClass());
+            for(Map.Entry<String, Object> entry: this.properties.entrySet()) {
+                boolean found = false;
+                for(PropertyDescriptor descriptor: info.getPropertyDescriptors()) {
+                   if(descriptor.getName().equals(entry.getKey())) {
+                       setProperty(descriptor, entry.getValue());
+                       found = true;
+                   }
+               }
+               if(!found) {
+                   throw new RuntimeException("You tried to set a property called " + entry.getKey() + ", but it doesn't exist");
+               }
+            }
+         } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setProperty(PropertyDescriptor descriptor, Object value) {
+
+        if(!descriptor.getPropertyType().isAssignableFrom(value.getClass())) {
+            if(!descriptor.getPropertyType().isPrimitive()) {
+                throw new RuntimeException("You tried to set a property called " + descriptor.getName() + ", but it was the wrong type");
+            }
+        }
+        try {
+            descriptor.getWriteMethod().invoke(this.payload, value);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -100,6 +145,12 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public List<String> getConstructorRefs() {
         return namedConstructorRefs;
+    }
+
+    @Override
+    public BeanDefinition addProperty(String name, Object value) {
+        this.properties.put(name, value);
+        return this;
     }
 
     @Override

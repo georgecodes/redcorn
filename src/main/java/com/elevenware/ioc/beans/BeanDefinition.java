@@ -93,4 +93,6 @@ public interface BeanDefinition {
 
     BeanDefinition addConstructorRef(String reference);
     List<String> getConstructorRefs();
+
+    BeanDefinition addProperty(String name, Object value);
 }
