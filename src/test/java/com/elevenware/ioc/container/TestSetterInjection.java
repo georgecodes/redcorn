@@ -1,6 +1,8 @@
 package com.elevenware.ioc.container;
 
 import com.elevenware.ioc.AllPrimitives;
+import com.elevenware.ioc.DependentBean;
+import com.elevenware.ioc.HasInjectableProperty;
 import com.elevenware.ioc.SimpleBean;
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.DefaultBeanDefinition;
@@ -51,5 +53,59 @@ public class TestSetterInjection {
 
     }
 
+    @Test
+    public void canHydrateWithNoPropertiesAtAll() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+
+        assertTrue(definition.canHydrate());
+
+    }
+
+    @Test
+    public void canHydrateIfPropertiesSatisfied() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class)
+                .addProperty("name", "message");
+
+        assertTrue(definition.canHydrate());
+
+    }
+
+    @Test
+    public void canNotHydrateIfUnresolvedReferenceProperties() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class)
+                .reference("other");
+
+        assertFalse(definition.canHydrate());
+
+    }
+
+    @Test
+    public void hydratesOnceReferencesResolved() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class)
+                .reference("other");
+
+        assertFalse(definition.canHydrate());
+
+        definition.resolve("other", new SimpleBean());
+
+        assertTrue(definition.canHydrate());
+
+    }
+
+    @Test( expected = RuntimeException.class)
+    public void resolvingNonExistentPropertyFails() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class)
+                .reference("other");
+
+        assertFalse(definition.canHydrate());
+
+        definition.resolve("foo", new SimpleBean());
+
+    }
 
 }

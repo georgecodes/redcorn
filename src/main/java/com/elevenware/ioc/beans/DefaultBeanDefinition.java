@@ -23,6 +23,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private boolean resolved;
     private String name;
     private Map<String, Object> properties;
+    private List<String> referenceProperties;
 
     public DefaultBeanDefinition(Class concreteClass) {
        this(concreteClass, concreteClass.getCanonicalName());
@@ -34,6 +35,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.constructorModel = new ConstructorModel(clazz);
         this.constructorArgs = new ArrayList<>();
         this.namedConstructorRefs = new ArrayList<>();
+        this.referenceProperties = new ArrayList<>();
         this.properties = new HashMap<>();
     }
 
@@ -150,6 +152,26 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public BeanDefinition addProperty(String name, Object value) {
         this.properties.put(name, value);
+        return this;
+    }
+
+    @Override
+    public BeanDefinition reference(String other) {
+        this.referenceProperties.add(other);
+        return this;
+    }
+
+    @Override
+    public boolean canHydrate() {
+        return this.referenceProperties.isEmpty();
+    }
+
+    @Override
+    public BeanDefinition resolve(String name, Object dependency) {
+        addProperty(name, dependency);
+        if(!this.referenceProperties.remove(name)) {
+            throw new RuntimeException("Tried to resolve unknown property " + name);
+        }
         return this;
     }
 

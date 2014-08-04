@@ -95,4 +95,10 @@ public interface BeanDefinition {
     List<String> getConstructorRefs();
 
     BeanDefinition addProperty(String name, Object value);
+
+    BeanDefinition reference(String other);
+
+    boolean canHydrate();
+
+    BeanDefinition resolve(String name, Object dependency);
 }
