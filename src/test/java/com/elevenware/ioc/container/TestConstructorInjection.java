@@ -94,6 +94,32 @@ public class TestConstructorInjection {
 
     }
 
+    @Test
+    public void canFindBeanByName() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register(SimpleBean.class);
+
+        container.start();
+
+        SimpleBean bean = container.find(SimpleBean.class.getCanonicalName());
+        assertNotNull(bean);
+
+    }
+
+    @Test
+    public void canRegisterByName() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("simple", SimpleBean.class);
+        container.start();
+
+        SimpleBean bean = container.find("simple");
+        assertNotNull(bean);
+
+    }
+
+
 
 
 }

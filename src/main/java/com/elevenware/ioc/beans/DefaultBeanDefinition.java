@@ -14,10 +14,16 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private Object payload;
     private ConstructorModel constructorModel;
     private boolean resolved;
+    private String name;
 
     public DefaultBeanDefinition(Class concreteClass) {
-        this.type = concreteClass;
-        this.constructorModel = new ConstructorModel(concreteClass);
+       this(concreteClass, concreteClass.getCanonicalName());
+    }
+
+    public DefaultBeanDefinition(Class clazz, String name) {
+        this.type = clazz;
+        this.name = name;
+        this.constructorModel = new ConstructorModel(clazz);
         this.constructorArgs = new ArrayList<>();
     }
 
@@ -76,6 +82,11 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public void markResolved() {
         this.resolved = true;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

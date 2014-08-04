@@ -35,4 +35,12 @@ public class TestDefaultBeanDefinition {
 
     }
 
+    @Test
+    public void definitionsAssumeClassNameAsNameByDefault() {
+
+        BeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
+        assertEquals(DependentBean.class.getCanonicalName(), definition.getName());
+
+    }
+
 }

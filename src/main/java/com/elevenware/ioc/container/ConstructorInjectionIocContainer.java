@@ -7,10 +7,7 @@ import com.elevenware.ioc.beans.DefaultBeanDefinition;
 import com.elevenware.ioc.visitors.Visitors;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConstructorInjectionIocContainer implements IocContainer {
 
@@ -18,7 +15,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
 
     private boolean started = false;
     private List<BeanDefinition> registeredTypes;
-    private Map<Class, BeanDefinition> context;
+    private Map<String, BeanDefinition> context;
 
     public ConstructorInjectionIocContainer() {
         registeredTypes = new ArrayList<>();
@@ -29,22 +26,46 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     @Override
     public <T> T find(Class<T> clazz) {
         checkStarted();
-        for(Class superType: context.keySet()) {
+        BeanDefinition definition = context.get(clazz.getCanonicalName());
+        if(definition != null) {
+            return (T) definition.getPayload();
+        }
+        for(BeanDefinition bean: context.values()) {
+            Class superType = bean.getType();
             if(clazz.isAssignableFrom(superType)) {
-                clazz = superType;
+                return (T) bean.getPayload();
             }
         }
-         BeanDefinition definition = context.get(clazz);
-        return (T) definition.getPayload();
+       return null;
+    }
+
+    @Override
+    public <T> T find(String id) {
+        checkStarted();
+        return (T) context.get(id).getPayload();
+    }
+
+    @Override
+    public Collection<BeanDefinition> getBeanDefinitions() {
+        return Collections.unmodifiableCollection(this.context.values());
+    }
+
+    @Override
+    public void addDefinition(BeanDefinition definition) {
+        this.context.put(definition.getName(), definition);
+    }
+
+    @Override
+    public BeanDefinition register(String name, Class clazz) {
+        BeanDefinition definition = new DefaultBeanDefinition(clazz, name);
+        registeredTypes.add(definition);
+        log.trace("Registered bean defintion for " + clazz);
+        return definition;
     }
 
     @Override
     public BeanDefinition register(Class concreteType) {
-
-        BeanDefinition definition = new DefaultBeanDefinition(concreteType);
-        registeredTypes.add(definition);
-        log.trace("Registered bean defintion for " + concreteType);
-        return definition;
+        return register(concreteType.getCanonicalName(), concreteType);
     }
 
     private void checkStarted() {
@@ -58,7 +79,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
         log.trace("Starting container " + this);
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
-        Visitors.constructorArgsInstantiator(context).visitAll(dependencyChain);
+        Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);
         if(this.context.isEmpty()) {
             throw new RuntimeException("No beans configured");
         }

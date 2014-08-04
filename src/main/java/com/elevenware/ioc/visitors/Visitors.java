@@ -3,13 +3,13 @@ package com.elevenware.ioc.visitors;
 import com.elevenware.ioc.EventListener;
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.ConstructorModel;
+import com.elevenware.ioc.container.IocContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public abstract class Visitors implements BeanDefinitionVisitor {
 
@@ -28,7 +28,7 @@ public abstract class Visitors implements BeanDefinitionVisitor {
         };
     }
 
-    public static BeanDefinitionVisitor constructorArgsInstantiator(final Map<Class, BeanDefinition> existing) {
+    public static BeanDefinitionVisitor constructorArgsInstantiator(final IocContainer existing) {
         return new Visitors() {
             @Override
             public void visit(BeanDefinition definition) {
@@ -38,20 +38,20 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                ConstructorModel model = definition.getConstructorModel();
 
                 List<Class<?>> types = new ArrayList<>();
-                for(BeanDefinition dependency: existing.values()) {
+                for(BeanDefinition dependency: existing.getBeanDefinitions()) {
                     types.add(dependency.getType());
                 }
                 Constructor best = model.findBestConstructorsForTypes(types, definition.getConstructorArgs());
                 if( best != null ) {
                     for(Class type: best.getParameterTypes()) {
-                        for(Map.Entry<Class, BeanDefinition> def: existing.entrySet()) {
-                            if(type.isAssignableFrom(def.getKey())) {
-                                definition.addContructorArg(def.getValue().getPayload());
+                        for(BeanDefinition def: existing.getBeanDefinitions()) {
+                            if(type.isAssignableFrom(def.getType())) {
+                                definition.addContructorArg(def.getPayload());
                             }
                         }
                     }
                     definition.instantiate();
-                    existing.put(definition.getType(), definition);
+                    existing.addDefinition(definition);
                 }
             }
 

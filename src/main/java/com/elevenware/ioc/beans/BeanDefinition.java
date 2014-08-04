@@ -89,4 +89,5 @@ public interface BeanDefinition {
      */
      void markResolved();
 
+    String getName();
 }
