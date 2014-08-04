@@ -24,4 +24,21 @@ public class TestHelloWorldApplication {
 
     }
 
+    @Test
+    public void messageAsConstructorArg() {
+
+        String message = "This is some custom message";
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("app", HelloWorldApplication.class);
+        container.register(MessageFactoryImpl.class);
+        container.register(CustomMessageProducer.class).addContructorArg(message);
+
+        container.start();
+
+        HelloWorldApplication app = container.find("app");
+
+        assertEquals(message, app.getMessage());
+
+    }
+
 }

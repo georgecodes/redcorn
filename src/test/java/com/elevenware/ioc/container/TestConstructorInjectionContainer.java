@@ -1,9 +1,6 @@
 package com.elevenware.ioc.container;
 
-import com.elevenware.ioc.DependentBean;
-import com.elevenware.ioc.Simple;
-import com.elevenware.ioc.SimpleBean;
-import com.elevenware.ioc.StartableBean;
+import com.elevenware.ioc.*;
 import com.elevenware.ioc.hierarchy.MessageFactory;
 import com.elevenware.ioc.hierarchy.MessageFactoryImpl;
 import com.elevenware.ioc.hierarchy.MessageProducerImpl;
@@ -161,5 +158,37 @@ public class TestConstructorInjectionContainer {
         container.find(Iterable.class);
 
     }
+
+    @Test
+    public void canRegisterMoreThanOneBeanOfType() {
+
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register("first", NamedBean.class).addContructorArg("first bean");
+        container.register("second", NamedBean.class).addContructorArg("second bean");
+
+        container.start();
+
+        NamedBean first = container.find("first");
+        NamedBean second = container.find("second");
+
+        assertEquals("first bean", first.getName());
+        assertEquals("second bean", second.getName());
+
+    }
+
+    @Test
+    public void registeringByClassAgainOverwritesFirstBean() {
+        IocContainer container = new ConstructorInjectionIocContainer();
+        container.register(NamedBean.class).addContructorArg("first bean");
+        container.register(NamedBean.class).addContructorArg("second bean");
+
+        container.start();
+
+        NamedBean bean = container.find(NamedBean.class);
+
+        assertEquals("second bean", bean.getName());
+
+    }
+
 
 }
