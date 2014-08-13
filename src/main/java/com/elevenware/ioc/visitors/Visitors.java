@@ -53,6 +53,7 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                     }
                     definition.instantiate();
                     existing.addDefinition(definition);
+                    definition.markResolved();
                     return;
                 }
 
@@ -77,6 +78,7 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                     }
                     definition.instantiate();
                     existing.addDefinition(definition);
+                    definition.markResolved();
                 }
             }
 

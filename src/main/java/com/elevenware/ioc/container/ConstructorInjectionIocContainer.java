@@ -1,5 +1,6 @@
 package com.elevenware.ioc.container;
 
+import com.elevenware.gribble.application.ContainerAware;
 import com.elevenware.ioc.DependencyInstantiationOrdering;
 import com.elevenware.ioc.Lifecycle;
 import com.elevenware.ioc.beans.BeanDefinition;
@@ -26,6 +27,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     @Override
     public <T> T get(Class<T> clazz) {
         checkStarted();
+        hydrateNewBeans();
         BeanDefinition definition = context.get(clazz.getCanonicalName());
         if(definition != null) {
             return (T) definition.getPayload();
@@ -42,6 +44,7 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     @Override
     public <T> T get(String id) {
         checkStarted();
+        hydrateNewBeans();
         BeanDefinition defintion = context.get(id);
         if(defintion == null) {
             return null;
@@ -64,7 +67,26 @@ public class ConstructorInjectionIocContainer implements IocContainer {
         BeanDefinition definition = new DefaultBeanDefinition(clazz, name);
         registeredTypes.add(definition);
         log.trace("Registered bean defintion for " + clazz);
+
         return definition;
+    }
+
+    private void hydrateNewBeans() {
+
+        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
+        List<BeanDefinition> dependencyChain = ordering.sort();
+        Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);
+
+        for(BeanDefinition definition: context.values()) {
+            if(Lifecycle.class.isAssignableFrom(definition.getType())) {
+                Lifecycle lifecycle = (Lifecycle) definition.getPayload();
+                lifecycle.start();
+            }
+            if(ContainerAware.class.isAssignableFrom(definition.getType())) {
+                ((ContainerAware) definition.getPayload()).setContainer(this);
+            }
+        }
+
     }
 
     @Override
@@ -86,11 +108,16 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     }
 
     @Override
-    public IocContainer createChild() {
-        IocContainer child = new ConstructorInjectionIocContainer();
+    public IocContainer createChild(String name) {
+        BeanDefinition containerDef = new DefaultBeanDefinition(ConstructorInjectionIocContainer.class, name);
+        containerDef.instantiate();
+        IocContainer child = (IocContainer) containerDef.getPayload();
         for(BeanDefinition bean: this.context.values()) {
             child.addDefinition(bean);
         }
+        containerDef.markResolved();
+        this.context.put(name, containerDef);
+        child.start();
         return child;
     }
 
@@ -108,17 +135,19 @@ public class ConstructorInjectionIocContainer implements IocContainer {
     @Override
     public void start() {
         log.trace("Starting container " + this);
-//        Visitors.referenceConstructorArgs(this).visitAll(this.registeredTypes);
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
         Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);
-        if(this.context.isEmpty()) {
-            throw new RuntimeException("No beans configured");
-        }
+//        if(this.context.isEmpty()) {
+//            throw new RuntimeException("No beans configured");
+//        }
         for(BeanDefinition definition: context.values()) {
             if(Lifecycle.class.isAssignableFrom(definition.getType())) {
                 Lifecycle lifecycle = (Lifecycle) definition.getPayload();
                 lifecycle.start();
+            }
+            if(ContainerAware.class.isAssignableFrom(definition.getType())) {
+                ((ContainerAware) definition.getPayload()).setContainer(this);
             }
         }
         started = true;

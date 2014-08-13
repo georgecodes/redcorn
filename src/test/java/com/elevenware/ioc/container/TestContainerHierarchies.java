@@ -12,7 +12,7 @@ public class TestContainerHierarchies {
         IocContainer parentContainer = new ConstructorInjectionIocContainer();
         parentContainer.register("parent", SimpleBean.class).addProperty("name", "I am in the parent container");
         parentContainer.start();
-        IocContainer childContainer = parentContainer.createChild();
+        IocContainer childContainer = parentContainer.createChild("sub");
         assertNotNull(childContainer);
         childContainer.register("child", SimpleBean.class).addProperty("name", "I am in the child container");
 

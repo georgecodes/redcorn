@@ -3,6 +3,7 @@ package com.elevenware.ioc;
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.DefaultBeanDefinition;
 import com.elevenware.ioc.container.HasNamedBeanArg;
+import com.elevenware.ioc.hierarchy.FooHandler;
 import com.elevenware.ioc.hierarchy.HelloWorldApplication;
 import com.elevenware.ioc.hierarchy.HelloWorldMessageProducerImpl;
 import com.elevenware.ioc.hierarchy.MessageFactoryImpl;
@@ -55,6 +56,30 @@ public class TestDependencyOrdering {
         assertEquals(3, sortedBeans.size());
         assertEquals(sortedBeans.get(2), base);
 
+    }
+
+    @Test
+    public void weirdBugInGribble() {
+
+        List<BeanDefinition> beans = new ArrayList<>();
+
+        BeanDefinition bazHandler = new DefaultBeanDefinition(BazHandler.class, "bazHandler")
+                .addConstructorRef("config")
+                .addConstructorRef("resolver");
+
+        BeanDefinition bazResolver = new DefaultBeanDefinition(BazResolver.class, "resolver");
+        BeanDefinition parser = new DefaultBeanDefinition(ManagedBazParser.class, "config")
+                .addContructorArg("baz");
+
+        beans.add(bazHandler);
+        beans.add(bazResolver);
+        beans.add(parser);
+
+        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(beans);
+
+        List<BeanDefinition> sortedBeans = ordering.sort();
+
+        assertEquals(bazHandler, sortedBeans.get(2));
 
     }
 

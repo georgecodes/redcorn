@@ -239,8 +239,19 @@ public class TestConstructorInjectionContainer {
         assertNotNull(handler.getWorker());
         assertNotNull(handler.getHelper());
 
-
     }
 
+    @Test
+    public void canStillAddBeansAfterContainerStarted() {
+
+        container.register("before", SimpleBean.class).addProperty("name", "this is injected prior to start");
+        container.start();
+        container.register("after", SimpleBean.class).addProperty("name", "this is injected after start");
+
+        SimpleBean bean = container.find("after");
+        assertNotNull(bean);
+        assertEquals("this is injected after start", bean.getName());
+
+    }
 
 }

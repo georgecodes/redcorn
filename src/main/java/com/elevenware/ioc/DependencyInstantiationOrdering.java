@@ -5,6 +5,7 @@ import com.elevenware.ioc.beans.ConstructorModel;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class DependencyInstantiationOrdering {
@@ -37,11 +38,12 @@ public class DependencyInstantiationOrdering {
         List<BeanDefinition> sortedBeans = new ArrayList<>();
         assertAllSatisfiable(beans, allTypes);
         List<Holder> holders = getGreedyConstructorsFrom(beans, allTypes);
-        for(int i = 0;i < holders.size(); i++ ) {
-            Holder holder = holders.get(i);
+        Iterator<Holder> iter = holders.iterator();
+        while(iter.hasNext()){
+            Holder holder = iter.next();
             if(holder.bean.canInstantiate()) {
                 sortedBeans.add(holder.bean);
-                holders.remove(i);
+                iter.remove();
             }
         }
         // look up named constructor refs
@@ -53,6 +55,7 @@ public class DependencyInstantiationOrdering {
                 i = 0;
             }
             Holder holder = holders.get(i);
+
             if(holder.bean.getConstructorModel().findBestConstructorsForTypes(currentlyReady, holder.bean.getConstructorArgs() ) != null || holder.bean.canInstantiate()) {
                 sortedBeans.add(holder.bean);
                 holders.remove(i);

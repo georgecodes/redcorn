@@ -15,5 +15,5 @@ public interface IocContainer extends Lifecycle {
     <T> T find(String name);
     <T> T find(Class clazz);
 
-    IocContainer createChild();
+    IocContainer createChild(String name);
 }
