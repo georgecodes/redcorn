@@ -2,6 +2,7 @@ package com.elevenware.ioc;
 
 import com.elevenware.ioc.beans.BeanDefinition;
 import com.elevenware.ioc.beans.DefaultBeanDefinition;
+import com.elevenware.ioc.container.ConstructorInjectionIocContainer;
 import com.elevenware.ioc.container.HasNamedBeanArg;
 import com.elevenware.ioc.hierarchy.FooHandler;
 import com.elevenware.ioc.hierarchy.HelloWorldApplication;
@@ -65,7 +66,10 @@ public class TestDependencyOrdering {
 
         BeanDefinition bazHandler = new DefaultBeanDefinition(BazHandler.class, "bazHandler")
                 .addConstructorRef("config")
-                .addConstructorRef("resolver");
+                .addConstructorRef("resolver")
+                .addConstructorRef("appContext");
+
+        BeanDefinition appContext = new DefaultBeanDefinition(ConstructorInjectionIocContainer.class, "appContext");
 
         BeanDefinition bazResolver = new DefaultBeanDefinition(BazResolver.class, "resolver");
         BeanDefinition parser = new DefaultBeanDefinition(ManagedBazParser.class, "config")
@@ -74,12 +78,13 @@ public class TestDependencyOrdering {
         beans.add(bazHandler);
         beans.add(bazResolver);
         beans.add(parser);
+        beans.add(appContext);
 
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(beans);
 
         List<BeanDefinition> sortedBeans = ordering.sort();
 
-        assertEquals(bazHandler, sortedBeans.get(2));
+        assertEquals(bazHandler, sortedBeans.get(3));
 
     }
 

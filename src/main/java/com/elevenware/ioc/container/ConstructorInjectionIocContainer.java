@@ -109,7 +109,8 @@ public class ConstructorInjectionIocContainer implements IocContainer {
 
     @Override
     public IocContainer createChild(String name) {
-        BeanDefinition containerDef = new DefaultBeanDefinition(ConstructorInjectionIocContainer.class, name);
+//        BeanDefinition containerDef = new DefaultBeanDefinition(ConstructorInjectionIocContainer.class, name);
+        BeanDefinition containerDef = this.register(name, ConstructorInjectionIocContainer.class);
         containerDef.instantiate();
         IocContainer child = (IocContainer) containerDef.getPayload();
         for(BeanDefinition bean: this.context.values()) {

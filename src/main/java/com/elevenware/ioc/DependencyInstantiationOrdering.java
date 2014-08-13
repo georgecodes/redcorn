@@ -46,7 +46,6 @@ public class DependencyInstantiationOrdering {
                 iter.remove();
             }
         }
-        // look up named constructor refs
         int i = 0;
 
         while(!holders.isEmpty()) {
