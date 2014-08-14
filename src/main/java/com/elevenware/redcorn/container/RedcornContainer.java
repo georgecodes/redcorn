@@ -1,0 +1,17 @@
+package com.elevenware.redcorn.container;
+
+import com.elevenware.redcorn.lifecycle.Lifecycle;
+import com.elevenware.redcorn.beans.BeanDefinition;
+
+public interface RedcornContainer extends Lifecycle {
+    BeanDefinition register(Class clazz);
+    <T> T get(Class<T> clazz);
+    <T> T get(String canonicalName);
+    java.util.Collection<BeanDefinition> getBeanDefinitions();
+    void addDefinition(BeanDefinition definition);
+    BeanDefinition register(String name, Class clazz);
+    <T> T find(String name);
+    <T> T find(Class clazz);
+
+    RedcornContainer createChild(String name);
+}
