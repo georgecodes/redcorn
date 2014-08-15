@@ -123,6 +123,13 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     }
 
     @Override
+    public BeanDefinition registerFactory(String name, String factoryMethod, Class factoryClass) {
+        BeanDefinition definition = new FactoryBeanDefinition(name, factoryMethod, factoryClass);
+        registeredTypes.add(definition);
+        return definition;
+    }
+
+    @Override
     public BeanDefinition register(Class concreteType) {
         return register(concreteType.getCanonicalName(), concreteType);
     }

@@ -14,4 +14,6 @@ public interface RedcornContainer extends Lifecycle {
     <T> T find(Class clazz);
 
     RedcornContainer createChild(String name);
+
+    BeanDefinition registerFactory(String name, String factoryMethod, Class factoryClass);
 }
