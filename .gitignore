@@ -1,3 +1,5 @@
 ioc.iml
 target
 redcorn.iml
+.gradle
+build
