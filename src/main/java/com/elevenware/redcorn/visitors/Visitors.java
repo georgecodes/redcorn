@@ -3,6 +3,7 @@ package com.elevenware.redcorn.visitors;
 import com.elevenware.redcorn.EventListener;
 import com.elevenware.redcorn.beans.BeanDefinition;
 import com.elevenware.redcorn.beans.ConstructorModel;
+import com.elevenware.redcorn.beans.DependencyResolutionException;
 import com.elevenware.redcorn.container.RedcornContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +59,9 @@ public abstract class Visitors implements BeanDefinitionVisitor {
 
                 Constructor best = model.findBestConstructorsForTypes(types, definition.getConstructorArgs());
                 if( best != null ) {
-                    List<BeanDefinition> potential = new ArrayList<>();
+
                     for(Class type: best.getParameterTypes()) {
+                        List<BeanDefinition> potential = new ArrayList<>();
                         for(BeanDefinition def: existing.getBeanDefinitions()) {
                             if(type.isAssignableFrom(def.getType())) {
                                 potential.add(def);
@@ -78,7 +80,10 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                     definition.instantiate();
                     existing.addDefinition(definition);
                     definition.markResolved();
+                } else {
+                    throw new DependencyResolutionException("Have no way to instantiate " + definition.getName());
                 }
+
             }
 
         };

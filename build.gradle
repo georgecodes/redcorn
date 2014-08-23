@@ -1,17 +1,81 @@
 apply plugin: 'java'
 apply plugin: 'maven'
+apply plugin: 'signing'
 
 group='com.elevenware'
 version='0.0.1-SNAPSHOT'
+archivesBaseName='redcorn'
 
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives jar, javadocJar, sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
 repositories {
     mavenCentral()
     mavenLocal()
 }
 
 dependencies {
- testCompile "junit:junit:4.11"
- testCompile "org.mockito:mockito-all:1.9.5"
- compile "ch.qos.logback:logback-classic:1.1.2"
+    testCompile "junit:junit:4.11"
+    testCompile "org.mockito:mockito-all:1.9.5"
+    compile "ch.qos.logback:logback-classic:1.1.2"
 
-} 
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name 'redcorn'
+                packaging 'jar'
+                // optionally artifactId can be defined here
+                url 'http://www.georgemcintosh.com/daletech'
+
+                scm {
+                    connection 'scm:svn:http://foo.googlecode.com/svn/trunk/'
+                    developerConnection 'scm:svn:https://foo.googlecode.com/svn/trunk/'
+                    url 'http://foo.googlecode.com/svn/trunk/'
+                }
+
+                licenses {
+                    license {
+                        name 'The Apache License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'georgemc'
+                        name 'George McIntosh'
+                        email 'george@georgemcintosh.com'
+                    }
+                }
+            }
+        }
+    }
+}

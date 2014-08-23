@@ -32,10 +32,4 @@ public class TestVisitors {
 
     }
 
-    @Test
-    public void constructorBeanInstantiationVisitor() {
-
-
-
-    }
 }
