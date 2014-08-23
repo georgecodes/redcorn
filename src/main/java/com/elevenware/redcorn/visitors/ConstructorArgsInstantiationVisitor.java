@@ -14,6 +14,6 @@ public class ConstructorArgsInstantiationVisitor implements BeanDefinitionVisito
     }
 
     private void pointlessCodeChangeToTestCloudbeesIntegration() {
-        // oihfwe
+        this should now fail the build
     }
 }
