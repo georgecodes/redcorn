@@ -12,4 +12,6 @@ public class ConstructorArgsInstantiationVisitor implements BeanDefinitionVisito
     public void visitAll(Iterable<BeanDefinition> definitions) {
 
     }
+
+    private void pointlessCodeChangeToTestCloudbeesIntegration() {}
 }
