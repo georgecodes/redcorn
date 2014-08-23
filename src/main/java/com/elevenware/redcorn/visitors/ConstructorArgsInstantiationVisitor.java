@@ -13,5 +13,7 @@ public class ConstructorArgsInstantiationVisitor implements BeanDefinitionVisito
 
     }
 
-    private void pointlessCodeChangeToTestCloudbeesIntegration() {}
+    private void pointlessCodeChangeToTestCloudbeesIntegration() {
+        // oihfwe
+    }
 }
