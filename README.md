@@ -17,6 +17,20 @@ Redcorn doesn't provide any fancy configuration options out of the box - althoug
     
 Self-explanatory, not that useful.
 
+### Getting hold of Redcorn
+
+Redcorn releases are available in Maven central, so there's no need to configure special repositories. To use Redcorn in your Maven project:
+
+    <dependency>
+      <groupId>com.elevenware</groupId>
+      <artifactId>redcorn</artifactId>
+      <version>0.1.0</version>
+    </dependency>
+    
+To use in your Gradle project:
+
+    compile "com.elevenware:redcorn:0.1.0"
+
 ## Constructor injection
 
 ### Implicit
