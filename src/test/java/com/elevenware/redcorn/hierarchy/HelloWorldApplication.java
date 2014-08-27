@@ -18,4 +18,9 @@ public class HelloWorldApplication implements Lifecycle {
     public void start() {
 
     }
+
+    @Override
+    public void stop() {
+
+    }
 }

@@ -11,6 +11,11 @@ public class StartableBean implements Lifecycle {
        this.started = true;
     }
 
+    @Override
+    public void stop() {
+
+    }
+
     public boolean isStarted() {
         return started;
     }

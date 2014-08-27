@@ -161,4 +161,14 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
         started = true;
     }
 
+    @Override
+    public void stop() {
+        for(BeanDefinition definition: context.values()) {
+            if (Lifecycle.class.isAssignableFrom(definition.getType())) {
+                Lifecycle lifecycle = (Lifecycle) definition.getPayload();
+                lifecycle.stop();
+            }
+        }
+    }
+
 }

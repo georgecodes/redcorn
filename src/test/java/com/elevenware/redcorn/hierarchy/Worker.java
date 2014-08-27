@@ -10,4 +10,9 @@ public class Worker implements Lifecycle {
     public void start() {
 
     }
+
+    @Override
+    public void stop() {
+
+    }
 }
