@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/georgecodes/redcorn.png?branch=master)](https://travis-ci.org/georgecodes/redcorn)
+
+
 # Redcorn - lightweight Java IoC container
 
 ## Introduction
