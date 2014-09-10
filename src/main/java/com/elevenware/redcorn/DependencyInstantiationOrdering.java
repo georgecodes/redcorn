@@ -84,7 +84,7 @@ public class DependencyInstantiationOrdering {
 
     private void assertAllSatisfiable(List<BeanDefinition> beans, List<Class<?>> allTypes) {
         for(BeanDefinition bean: beans) {
-            Constructor best = bean.getConstructorModel().findBestConstructorsForTypes(allTypes, bean.getConstructorArgs());
+            Constructor best = bean.getConstructorModel().findBestConstructorsForTypes(allTypes, bean.getInjectionModel());
             if(best == null) {
                 throw new RuntimeException("Could never satisfy dependencies for " + bean);
             }

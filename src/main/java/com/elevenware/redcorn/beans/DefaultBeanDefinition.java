@@ -1,5 +1,9 @@
 package com.elevenware.redcorn.beans;
 
+import com.elevenware.redcorn.model.ConcreteInjectableArgument;
+import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ReferenceInjectableArgument;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import com.elevenware.redcorn.visitors.BeanDefinitionVisitor;
 
 import java.beans.BeanInfo;
@@ -18,12 +22,14 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private final Class type;
     private final List<Object> constructorArgs;
     private final List<String> namedConstructorRefs;
+    private final InjectableArgumentModel injectableArgumentModel;
     private Object payload;
     private ConstructorModel constructorModel;
     private boolean resolved;
     private String name;
     private Map<String, Object> properties;
     private List<String> referenceProperties;
+    private ReferenceResolutionContext resolutionContext;
 
     public DefaultBeanDefinition(Class concreteClass) {
        this(concreteClass, concreteClass.getCanonicalName());
@@ -37,14 +43,16 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.namedConstructorRefs = new ArrayList<>();
         this.referenceProperties = new ArrayList<>();
         this.properties = new HashMap<>();
+        this.injectableArgumentModel = new InjectableArgumentModel();
     }
 
     @Override
     public void instantiate() {
-        constructorModel.assertHasConstructorFor(constructorArgs);
-        Constructor constructor = constructorModel.findConstructorFor(constructorArgs);
+        injectableArgumentModel.inflateConstructorArgs();
+        constructorModel.assertHasConstructorFor(injectableArgumentModel);
+        Constructor constructor = constructorModel.findConstructorFor(injectableArgumentModel);
         try {
-            payload = constructor.newInstance(constructorArgs.toArray());
+            payload = constructor.newInstance(injectableArgumentModel.getInflatedConstructorArgs());
             hydratePayload();
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -104,18 +112,19 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     @Override
     public boolean canInstantiate() {
-        return constructorModel.hasConstructorFor(constructorArgs);
+        return constructorModel.hasConstructorFor(injectableArgumentModel);
     }
 
     @Override
     public BeanDefinition addContructorArg(Object object) {
-        this.constructorArgs.add(object);
+//        this.constructorArgs.add(object);
+        injectableArgumentModel.addConstructorArg(new ConcreteInjectableArgument(object));
         return this;
     }
 
     @Override
     public List<Object> getConstructorArgs() {
-        return constructorArgs;
+        return injectableArgumentModel.getConcreteConstructorArgs();
     }
 
     @Override
@@ -140,8 +149,22 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     @Override
     public BeanDefinition addConstructorRef(String reference) {
-        this.namedConstructorRefs.add(reference);
+//        this.namedConstructorRefs.add(reference);
+        injectableArgumentModel.addConstructorArg(new ReferenceInjectableArgument(reference));
         return this;
+    }
+
+    @Override
+    public DefaultBeanDefinition addConstructorRef(String reference, Class<?> type) {
+        injectableArgumentModel.addConstructorArg(new ReferenceInjectableArgument(reference, type));
+        return this;
+    }
+
+    @Override
+    public void inflateConstructorArgs() {
+        for(Object object: injectableArgumentModel.getInflatedConstructorArgs()) {
+            constructorArgs.add(object);
+        }
     }
 
     @Override
@@ -174,6 +197,19 @@ public class DefaultBeanDefinition implements BeanDefinition {
         }
         return this;
     }
+
+    @Override
+    public void setResolutionContext(ReferenceResolutionContext context) {
+        this.resolutionContext = context;
+        this.injectableArgumentModel.setContext(context);
+    }
+
+    @Override
+    public InjectableArgumentModel getInjectionModel() {
+        return injectableArgumentModel;
+    }
+
+
 
     @Override
     public boolean isResolved() {

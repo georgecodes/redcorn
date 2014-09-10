@@ -1,5 +1,7 @@
 package com.elevenware.redcorn.beans;
 
+import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import com.elevenware.redcorn.visitors.BeanDefinitionVisitor;
 
 import java.util.List;
@@ -101,4 +103,12 @@ public interface BeanDefinition {
     boolean canHydrate();
 
     BeanDefinition resolve(String name, Object dependency);
+
+    void setResolutionContext(ReferenceResolutionContext context);
+
+    InjectableArgumentModel getInjectionModel();
+
+    DefaultBeanDefinition addConstructorRef(String second, Class<?> type);
+
+    void inflateConstructorArgs();
 }

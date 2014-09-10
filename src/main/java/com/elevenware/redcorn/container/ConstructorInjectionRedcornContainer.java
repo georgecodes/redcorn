@@ -5,7 +5,7 @@ import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.beans.BeanDefinition;
 import com.elevenware.redcorn.beans.DefaultBeanDefinition;
 import com.elevenware.redcorn.lifecycle.ContainerAware;
-import com.elevenware.redcorn.visitors.Visitors;
+import com.elevenware.redcorn.visitors.AbstractBeanDefinitionVisitor;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -15,7 +15,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(ConstructorInjectionRedcornContainer.class);
 
     private boolean started = false;
-    private List<BeanDefinition> registeredTypes;
+    protected List<BeanDefinition> registeredTypes;
     private Map<String, BeanDefinition> context;
 
     public ConstructorInjectionRedcornContainer() {
@@ -75,7 +75,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
-        Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);
+        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
 
         for(BeanDefinition definition: context.values()) {
             if(Lifecycle.class.isAssignableFrom(definition.getType())) {
@@ -145,10 +145,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
         log.trace("Starting container " + this);
         DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
         List<BeanDefinition> dependencyChain = ordering.sort();
-        Visitors.constructorArgsInstantiator(this).visitAll(dependencyChain);
-//        if(this.context.isEmpty()) {
-//            throw new RuntimeException("No beans configured");
-//        }
+        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
         for(BeanDefinition definition: context.values()) {
             if(Lifecycle.class.isAssignableFrom(definition.getType())) {
                 Lifecycle lifecycle = (Lifecycle) definition.getPayload();

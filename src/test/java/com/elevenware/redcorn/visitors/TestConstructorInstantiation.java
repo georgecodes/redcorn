@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +22,7 @@ public class TestConstructorInstantiation {
         RedcornContainer container = mock(RedcornContainer.class);
         BeanDefinition bean = new DefaultBeanDefinition(SimpleBean.class);
 
-        Visitors.constructorArgsInstantiator(container).visit(bean);
+        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(container).visit(bean);
 
         assertNotNull(bean.getPayload());
 
@@ -35,7 +34,7 @@ public class TestConstructorInstantiation {
         RedcornContainer container = mock(RedcornContainer.class);
         BeanDefinition bean = new DefaultBeanDefinition(DependentBean.class);
 
-        Visitors.constructorArgsInstantiator(container).visit(bean);
+        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(container).visit(bean);
 
     }
 
@@ -49,7 +48,7 @@ public class TestConstructorInstantiation {
         when(container.getBeanDefinitions()).thenReturn(toList(dependency));
         BeanDefinition bean = new DefaultBeanDefinition(DependentBean.class);
 
-        Visitors.constructorArgsInstantiator(container).visit(bean);
+        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(container).visit(bean);
 
         assertNotNull(bean.getPayload());
 

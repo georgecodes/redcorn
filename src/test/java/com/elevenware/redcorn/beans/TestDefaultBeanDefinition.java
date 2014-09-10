@@ -5,9 +5,11 @@ import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.hierarchy.FooHandler;
 import com.elevenware.redcorn.hierarchy.Helper;
 import com.elevenware.redcorn.hierarchy.Worker;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class TestDefaultBeanDefinition {
 
@@ -49,17 +51,19 @@ public class TestDefaultBeanDefinition {
     @Test
     public void multipleConstructorRefsAreResolved() {
 
+        ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
+        when(context.resolve("worker")).thenReturn(new Worker());
+        when(context.resolve("helper")).thenReturn(new Helper());
+
         BeanDefinition definition = new DefaultBeanDefinition(FooHandler.class)
                 .addConstructorRef("worker")
                 .addConstructorRef("helper");
 
-        definition.addContructorArg(new Worker())
-                .addContructorArg(new Helper());
+        definition.setResolutionContext(context);
 
         definition.instantiate();
 
         assertNotNull(definition.getPayload());
-
 
     }
 

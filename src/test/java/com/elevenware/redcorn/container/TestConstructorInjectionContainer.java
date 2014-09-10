@@ -198,7 +198,7 @@ public class TestConstructorInjectionContainer {
 
         container.register("first", NamedBean.class).addContructorArg("first bean");
         container.register("second", NamedBean.class).addContructorArg("second bean");
-        container.register(HasNamedBeanArg.class).addConstructorRef("second");
+        container.register(HasNamedBeanArg.class).addConstructorRef("second", NamedBean.class);
 
         container.start();
 

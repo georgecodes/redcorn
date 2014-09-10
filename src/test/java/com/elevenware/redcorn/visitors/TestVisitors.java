@@ -16,7 +16,7 @@ public class TestVisitors {
     public void simpleBeanInstantiationVisitor() {
 
         EventListener<BeanDefinition> mockListener = mock(EventListener.class);
-        BeanDefinitionVisitor visitor = Visitors.simpleTypeInstantiator(mockListener);
+        BeanDefinitionVisitor visitor = AbstractBeanDefinitionVisitor.simpleTypeInstantiator(mockListener);
         BeanDefinition simpleBean = mock(DefaultBeanDefinition.class);
         List<BeanDefinition> beans = new ArrayList<>();
         beans.add(simpleBean);

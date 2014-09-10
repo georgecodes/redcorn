@@ -1,7 +1,12 @@
-package com.elevenware.redcorn.beans;
+package com.elevenware.redcorn.constructors;
 
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
+import com.elevenware.redcorn.beans.ConstructorModel;
+import com.elevenware.redcorn.model.ConcreteInjectableArgument;
+import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ReferenceInjectableArgument;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -11,6 +16,7 @@ import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class TestConstructorModel {
 
@@ -69,6 +75,51 @@ public class TestConstructorModel {
         Constructor constructors = model.findBestConstructorsForTypes(classes, args);
         assertEquals(2, constructors.getParameterTypes().length);
     }
+
+    @Test
+    public void findsConstructorBasedOnConcreteInjectableArgs() {
+
+        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        injectionModel.addConstructorArg(new ConcreteInjectableArgument(new SimpleBean()));
+
+        ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
+
+        assertTrue(constructorModel.hasConstructorFor(injectionModel));
+
+    }
+
+    @Test
+    public void findsConstructorBasedOnTypeSpecifiedReferenceInjectableArgs() {
+
+        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        injectionModel.addConstructorArg(new ReferenceInjectableArgument("simple.bean", SimpleBean.class));
+
+        ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
+
+        assertTrue(constructorModel.hasConstructorFor(injectionModel));
+
+    }
+    @Test
+    public void findsConstructorBasedOnResolvedReferenceInjectableArgs() {
+
+        ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
+        when(context.resolve("simple.bean")).thenReturn(new SimpleBean());
+
+        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        ReferenceInjectableArgument arg = new ReferenceInjectableArgument("simple.bean");
+        injectionModel.setContext(context);
+
+        injectionModel.addConstructorArg(arg);
+
+        ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
+
+        assertFalse(constructorModel.hasConstructorFor(injectionModel));
+        injectionModel.inflateConstructorArgs();
+
+        assertTrue(constructorModel.hasConstructorFor(injectionModel));
+
+    }
+
 
 
 }

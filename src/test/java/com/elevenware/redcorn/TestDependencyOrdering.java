@@ -87,6 +87,14 @@ public class TestDependencyOrdering {
 
     }
 
+    /*
+    The algorithm:
+
+    1/ find everything that has explicit concrete constructor args
+    2/ find everything that has reference constructor args
+    3/ find everything else?
+
+     */
 
 
 }

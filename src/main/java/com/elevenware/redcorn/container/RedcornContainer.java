@@ -2,6 +2,7 @@ package com.elevenware.redcorn.container;
 
 import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 
 public interface RedcornContainer extends Lifecycle {
     BeanDefinition register(Class clazz);
@@ -16,4 +17,5 @@ public interface RedcornContainer extends Lifecycle {
     RedcornContainer createChild(String name);
 
     BeanDefinition registerFactory(String name, String factoryMethod, Class factoryClass);
+
 }
