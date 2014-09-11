@@ -3,9 +3,8 @@ package com.elevenware.redcorn.beans;
 import com.elevenware.redcorn.model.*;
 
 import java.lang.reflect.Constructor;
-import java.util.List;
 
-public class ResolvableBeanDefinition {
+public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
 
     private final Class<?> type;
     private final String name;
@@ -26,44 +25,53 @@ public class ResolvableBeanDefinition {
         this.constructorArguments = new InjectableArgumentModel();
     }
 
+    @Override
     public boolean canInstantiate() {
 
        return instantiationStrategy != null;
 
     }
 
+    @Override
     public void instantiate() {
         payload =  instantiationStrategy.instantiate();
     }
 
+    @Override
     public Class getType() {
         return type;
     }
 
+    @Override
     public Object getPayload() {
         return payload;
     }
 
+    @Override
     public void setResolutionContext(ReferenceResolutionContext resolutionContext) {
         this.resolutionContext = resolutionContext;
         constructorArguments.setContext(resolutionContext);
     }
 
+    @Override
     public ResolvableBeanDefinition addConstructorArg(Object arg) {
         constructorArguments.addConstructorArg(new ConcreteInjectableArgument(arg));
         return this;
     }
 
+    @Override
     public ResolvableBeanDefinition addConstructorRef(String other) {
         constructorArguments.addConstructorArg(new ReferenceInjectableArgument(other));
         return this;
     }
 
+    @Override
     public ResolvableBeanDefinition addConstructorRef(Class<?> clazz) {
         constructorArguments.addConstructorArg(new ReferenceInjectableArgument(clazz.getCanonicalName(), clazz));
         return this;
     }
 
+    @Override
     public void prepare() {
 
         constructorArguments.setContext(resolutionContext);
@@ -127,10 +135,12 @@ public class ResolvableBeanDefinition {
         throw new RuntimeException("Cannot resolve all reference constructor arguments for " + type);
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public boolean isSatisfied() {
         return instantiationStrategy.isSatisfied();
     }

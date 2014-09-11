@@ -17,4 +17,10 @@ public class CollectionUtils {
 //        }
 //        throw new RuntimeException("What sort of collection is this??");
     }
+
+    public static <T> List<T> asList(T object) {
+        List<T> list = new ArrayList<>();
+        list.add(object);
+        return list;
+    }
 }

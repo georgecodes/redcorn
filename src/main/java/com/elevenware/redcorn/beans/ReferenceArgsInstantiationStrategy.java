@@ -24,13 +24,12 @@ public class ReferenceArgsInstantiationStrategy implements InstantiationStrategy
         try {
             return constructorToUse.newInstance(inflatedConstructorArgs);
         } catch (InstantiationException e) {
-            e.printStackTrace();
+           throw new BeanInstantiationException("Failed to instantiate " + constructorToUse.getDeclaringClass(), e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            throw new BeanInstantiationException("Failed to instantiate " + constructorToUse.getDeclaringClass(), e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            throw new BeanInstantiationException("Failed to instantiate " + constructorToUse.getDeclaringClass(), e);
         }
-        return null;
     }
 
     @Override

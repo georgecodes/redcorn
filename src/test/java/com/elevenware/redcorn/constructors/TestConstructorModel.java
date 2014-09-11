@@ -7,6 +7,7 @@ import com.elevenware.redcorn.model.ConcreteInjectableArgument;
 import com.elevenware.redcorn.model.InjectableArgumentModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
+import com.elevenware.redcorn.visitors.CollectionUtils;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -104,7 +105,8 @@ public class TestConstructorModel {
 
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
         when(context.resolve("simple.bean")).thenReturn(new SimpleBean());
-
+        Class type = SimpleBean.class;
+        when(context.lookupType("simple.bean")).thenReturn(type);
         InjectableArgumentModel injectionModel = new InjectableArgumentModel();
         ReferenceInjectableArgument arg = new ReferenceInjectableArgument("simple.bean");
         injectionModel.setContext(context);
@@ -112,9 +114,6 @@ public class TestConstructorModel {
         injectionModel.addConstructorArg(arg);
 
         ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
-
-        assertFalse(constructorModel.hasConstructorFor(injectionModel));
-        injectionModel.inflateConstructorArgs();
 
         assertTrue(constructorModel.hasConstructorFor(injectionModel));
 
