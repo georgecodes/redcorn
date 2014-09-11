@@ -1,6 +1,7 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.TypesMatcher;
+import com.elevenware.redcorn.model.InjectableArgument;
 import com.elevenware.redcorn.model.InjectableArgumentModel;
 
 import java.lang.reflect.Constructor;
@@ -33,15 +34,9 @@ public class ReferenceArgsInstantiationStrategy implements InstantiationStrategy
     }
 
     @Override
-    public boolean isSatisfiedBy(List<Class<?>> availableTypes) {
-        for(Class constructorType: constructorToUse.getParameterTypes()) {
-            boolean satisfiable = false;
-            for(Class availableType: availableTypes) {
-                if(!constructorType.isAssignableFrom(availableType)) {
-                    satisfiable = true;
-                }
-            }
-            if(!satisfiable) {
+    public boolean isSatisfied() {
+        for(InjectableArgument argument: argumentModel) {
+            if(!argument.canResolve()) {
                 return false;
             }
         }

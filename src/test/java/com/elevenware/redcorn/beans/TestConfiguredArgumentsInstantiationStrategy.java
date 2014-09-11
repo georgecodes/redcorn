@@ -24,7 +24,7 @@ public class TestConfiguredArgumentsInstantiationStrategy {
         InjectableArgumentModel model = new InjectableArgumentModel();
         model.addConstructorArg(new ConcreteInjectableArgument(name));
         Constructor<?> constructor = NamedBean.class.getDeclaredConstructor(new Class[] {String.class});
-        InstantiationStrategy strategy = new ConfiguredArgumentsInstantiationStrategy(constructor, model);
+        InstantiationStrategy strategy = new ConcreteArgumentsInstantiationStrategy(constructor, model);
 
         NamedBean bean = (NamedBean) strategy.instantiate();
 
@@ -43,7 +43,7 @@ public class TestConfiguredArgumentsInstantiationStrategy {
         model.setContext(context);
         model.addConstructorArg(new ReferenceInjectableArgument("the.bean"));
         Constructor constructor = DependentBean.class.getDeclaredConstructor(new Class[] {SimpleBean.class });
-        InstantiationStrategy strategy = new ConfiguredArgumentsInstantiationStrategy(constructor, model);
+        InstantiationStrategy strategy = new ConcreteArgumentsInstantiationStrategy(constructor, model);
 
         DependentBean bean = (DependentBean) strategy.instantiate();
 
@@ -59,7 +59,7 @@ public class TestConfiguredArgumentsInstantiationStrategy {
 
         Constructor<?> constructor = NamedBean.class.getDeclaredConstructor(new Class[] {String.class});
 
-        InstantiationStrategy strategy = new ConfiguredArgumentsInstantiationStrategy(constructor, new InjectableArgumentModel());
+        InstantiationStrategy strategy = new ConcreteArgumentsInstantiationStrategy(constructor, new InjectableArgumentModel());
 
         strategy.instantiate();
 

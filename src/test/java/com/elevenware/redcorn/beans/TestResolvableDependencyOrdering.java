@@ -1,7 +1,7 @@
 package com.elevenware.redcorn.beans;
 
-import com.elevenware.redcorn.DependencyInstantiationOrdering;
-import com.elevenware.redcorn.NamedBean;
+import com.elevenware.redcorn.*;
+import com.elevenware.redcorn.container.ConstructorInjectionRedcornContainer;
 import com.elevenware.redcorn.container.HasNamedBeanArg;
 import com.elevenware.redcorn.hierarchy.HelloWorldApplication;
 import com.elevenware.redcorn.hierarchy.HelloWorldMessageProducerImpl;
@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestResolvableDependencyOrdering {
 
-//    @Test
+    @Test
     public void ordering() {
 
         List<ResolvableBeanDefinition> beans = new ArrayList<>();
@@ -57,6 +57,35 @@ public class TestResolvableDependencyOrdering {
 
         assertEquals(3, sortedBeans.size());
         assertEquals(sortedBeans.get(2), base);
+
+    }
+
+    @Test
+    public void weirdBugInGribble() {
+
+        List<ResolvableBeanDefinition> beans = new ArrayList<>();
+
+        ResolvableBeanDefinition bazHandler = new ResolvableBeanDefinition(BazHandler.class, "bazHandler")
+                .addConstructorRef("config")
+                .addConstructorRef("resolver")
+                .addConstructorRef("appContext");
+
+        ResolvableBeanDefinition appContext = new ResolvableBeanDefinition(ConstructorInjectionRedcornContainer.class, "appContext");
+
+        ResolvableBeanDefinition bazResolver = new ResolvableBeanDefinition(BazResolver.class, "resolver");
+        ResolvableBeanDefinition parser = new ResolvableBeanDefinition(ManagedBazParser.class, "config")
+                .addConstructorArg("baz");
+
+        beans.add(bazHandler);
+        beans.add(bazResolver);
+        beans.add(parser);
+        beans.add(appContext);
+
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
+
+        List<ResolvableBeanDefinition> sortedBeans = ordering.sort();
+
+        assertEquals(bazHandler, sortedBeans.get(3));
 
     }
 

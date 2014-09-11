@@ -7,13 +7,13 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class ConfiguredArgumentsInstantiationStrategy implements InstantiationStrategy {
+public class ConcreteArgumentsInstantiationStrategy implements InstantiationStrategy {
 
     private final Constructor<?> constructorToUse;
 //    private final Object[] args;
     private final InjectableArgumentModel argumentModel;
 
-    public ConfiguredArgumentsInstantiationStrategy(Constructor<?> constructor, InjectableArgumentModel args) {
+    public ConcreteArgumentsInstantiationStrategy(Constructor<?> constructor, InjectableArgumentModel args) {
         this.constructorToUse = constructor;
 //        this.args = args.inflateConstructorArgs();
         this.argumentModel = args;
@@ -35,18 +35,7 @@ public class ConfiguredArgumentsInstantiationStrategy implements InstantiationSt
     }
 
     @Override
-    public boolean isSatisfiedBy(List<Class<?>> availableTypes) {
-        for(Class constructorType: constructorToUse.getParameterTypes()) {
-            boolean satisfiable = false;
-            for(Class availableType: availableTypes) {
-                if(!constructorType.isAssignableFrom(availableType)) {
-                    satisfiable = true;
-                }
-            }
-            if(!satisfiable) {
-                return false;
-            }
-        }
+    public boolean isSatisfied() {
         return true;
     }
 }

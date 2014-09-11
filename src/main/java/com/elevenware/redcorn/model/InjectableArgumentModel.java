@@ -4,6 +4,8 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 public class InjectableArgumentModel implements Iterable<InjectableArgument> {
     private ReferenceResolutionContext context;
@@ -21,6 +23,7 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
 
     public void setContext(ReferenceResolutionContext ctx) {
         this.context = ctx;
+        rewireResolutionContext(ctx);
     }
 
     public void addConstructorArg(InjectableArgument injectableArgument) {
@@ -122,5 +125,13 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
             types.add(argument.getType());
         }
         return types;
+    }
+
+    private void rewireResolutionContext(ReferenceResolutionContext context) {
+        for(InjectableArgument argument: constructorArgs) {
+            if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
+                ((ReferenceInjectableArgument) argument).setContext(context);
+            }
+        }
     }
 }

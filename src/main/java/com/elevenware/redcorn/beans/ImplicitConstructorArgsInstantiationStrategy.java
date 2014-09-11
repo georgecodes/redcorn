@@ -36,10 +36,10 @@ public class ImplicitConstructorArgsInstantiationStrategy implements Instantiati
     }
 
     @Override
-    public boolean isSatisfiedBy(List<Class<?>> availableTypes) {
+    public boolean isSatisfied() {
         for(Class constructorType: constructor.getParameterTypes()) {
             boolean satisfiable = false;
-            for(Class availableType: availableTypes) {
+            for(Class availableType: resolutionContext.getContainedTypes()) {
                 if(constructorType.isAssignableFrom(availableType)) {
                     satisfiable = true;
                 }

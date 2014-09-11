@@ -3,7 +3,6 @@ package com.elevenware.redcorn.beans;
 import com.elevenware.redcorn.model.*;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class ResolvableBeanDefinition {
@@ -33,10 +32,6 @@ public class ResolvableBeanDefinition {
 
     }
 
-    public boolean isSatisfiedBy(List<Class<?>> availableTypes) {
-        return instantiationStrategy.isSatisfiedBy(availableTypes);
-    }
-
     public void instantiate() {
         payload =  instantiationStrategy.instantiate();
     }
@@ -51,6 +46,7 @@ public class ResolvableBeanDefinition {
 
     public void setResolutionContext(ReferenceResolutionContext resolutionContext) {
         this.resolutionContext = resolutionContext;
+        constructorArguments.setContext(resolutionContext);
     }
 
     public ResolvableBeanDefinition addConstructorArg(Object arg) {
@@ -103,19 +99,39 @@ public class ResolvableBeanDefinition {
     }
 
     private void createInstantiationStrategyFrom(InjectableArgumentModel constructorArguments) {
+        boolean allConcrete = true;
+        boolean allReferenceCanResolve = true;
         for(InjectableArgument argument: constructorArguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 ReferenceInjectableArgument arg = (ReferenceInjectableArgument) argument;
                 arg.setContext(resolutionContext);
+                if(!arg.canResolve()) {
+                    allReferenceCanResolve = false;
+                }
+            }
+            if(!ConcreteInjectableArgument.class.isAssignableFrom(argument.getClass())) {
+                allConcrete = false;
             }
 
         }
-        Constructor constructor = constructorModel.findConstructorFor(constructorArguments);
-        instantiationStrategy = new ConfiguredArgumentsInstantiationStrategy(constructor, constructorArguments);
-        return;
+        if(allConcrete) {
+            Constructor constructor = constructorModel.findConstructorFor(constructorArguments);
+            instantiationStrategy = new ConcreteArgumentsInstantiationStrategy(constructor, constructorArguments);
+            return;
+        }
+        if(allReferenceCanResolve) {
+            Constructor constructor = constructorModel.findConstructorFor(constructorArguments);
+            instantiationStrategy = new ReferenceArgsInstantiationStrategy(constructor, constructorArguments);
+            return;
+        }
+        throw new RuntimeException("Cannot resolve all reference constructor arguments for " + type);
     }
 
     public String getName() {
         return name;
+    }
+
+    public boolean isSatisfied() {
+        return instantiationStrategy.isSatisfied();
     }
 }

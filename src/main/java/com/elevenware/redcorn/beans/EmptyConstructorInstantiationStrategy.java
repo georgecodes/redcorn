@@ -21,7 +21,7 @@ public class EmptyConstructorInstantiationStrategy implements InstantiationStrat
     }
 
     @Override
-    public boolean isSatisfiedBy(List<Class<?>> availableTypes) {
-        return true;
+    public boolean isSatisfied() {
+        return false;
     }
 }

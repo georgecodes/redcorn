@@ -4,22 +4,13 @@ import com.elevenware.redcorn.model.ReferenceResolutionContext;
 
 import java.util.*;
 
-public class ResolvableDependencyInstantiationOrdering implements ReferenceResolutionContext {
+public class ResolvableDependencyInstantiationOrdering {
     private final List<ResolvableBeanDefinition> beans;
-    private final Map<String, ResolvableBeanDefinition> nameToBean;
-    private final Map<Class, ResolvableBeanDefinition> classToBean;
-    private final List<Class<?>> types;
+    private final SatisfactionChecker eventuallySatisfiable;
 
     public ResolvableDependencyInstantiationOrdering(List<ResolvableBeanDefinition> beans) {
         this.beans = beans;
-        this.types = new ArrayList<>();
-        this.nameToBean = new HashMap<>();
-        this.classToBean = new HashMap<>();
-        for(ResolvableBeanDefinition bean: beans) {
-            types.add(bean.getType());
-            nameToBean.put(bean.getName(), bean);
-            classToBean.put(bean.getType(), bean);
-        }
+        this.eventuallySatisfiable = new SatisfactionChecker(beans);
     }
 
     public List<ResolvableBeanDefinition> sort() {
@@ -28,18 +19,19 @@ public class ResolvableDependencyInstantiationOrdering implements ReferenceResol
         assertAllSatisfiable(beans, allTypes);
         int i = 0;
 
+
         while(!beans.isEmpty()) {
+            eventuallySatisfiable.initialise(sortedBeans);
             List<Class<?>> currentlyReady = getTypesFrom(sortedBeans);
             if( i >= beans.size() ) {
                 i = 0;
             }
             ResolvableBeanDefinition bean = beans.get(i);
 
-            if(bean.canInstantiate() && bean.isSatisfiedBy(getTypesFrom(sortedBeans))) {
+            if(bean.canInstantiate() && bean.isSatisfied()) {
+//            if(bean.canInstantiate() && bean.isSatisfiedBy(getTypesFrom(sortedBeans))) {
                 sortedBeans.add(bean);
                 beans.remove(i);
-            } else if(bean.canInstantiate() && bean.) {
-
             }
             i++;
         }
@@ -48,9 +40,9 @@ public class ResolvableDependencyInstantiationOrdering implements ReferenceResol
 
     private void assertAllSatisfiable(List<ResolvableBeanDefinition> beans, List<Class<?>> allTypes) {
         for(ResolvableBeanDefinition bean: beans) {
-            bean.setResolutionContext(this);
+            bean.setResolutionContext(eventuallySatisfiable);
             bean.prepare();
-            if(!bean.isSatisfiedBy(allTypes)) {
+            if(!bean.isSatisfied()) {
                 throw new RuntimeException("I have no way of satisfying all dependencies for " + bean.getType());
             }
         }
@@ -64,32 +56,54 @@ public class ResolvableDependencyInstantiationOrdering implements ReferenceResol
         return types;
     }
 
-    @Override
-    public Object resolve(String ref) {
-        return nameToBean.get(ref).getPayload();
-    }
+    private class SatisfactionChecker implements ReferenceResolutionContext {
 
-    @Override
-    public boolean canResolve(String ref) {
-        return nameToBean.containsKey(ref);
-    }
+        private List<Class<?>> types;
+        private Map<String, ResolvableBeanDefinition> nameToBean;
+        private Map<Class, ResolvableBeanDefinition> classToBean;
 
-    @Override
-    public Class<?> lookupType(String ref) {
-        ResolvableBeanDefinition bean = nameToBean.get(ref);
-        if(bean != null) {
-            return bean.getType();
+        private SatisfactionChecker(List<ResolvableBeanDefinition> beans) {
+           initialise(beans);
         }
-        return null;
-    }
 
-    @Override
-    public List<Class<?>> getContainedTypes() {
-        return types;
-    }
+        void initialise(List<ResolvableBeanDefinition> beans) {
+            this.types = new ArrayList<>();
+            this.nameToBean = new HashMap<>();
+            this.classToBean = new HashMap<>();
+            for(ResolvableBeanDefinition bean: beans) {
+                types.add(bean.getType());
+                nameToBean.put(bean.getName(), bean);
+                classToBean.put(bean.getType(), bean);
+            }
+        }
 
-    @Override
-    public Object resolveType(Class<?> clazz) {
-        return classToBean.get(clazz).getPayload();
+        @Override
+        public Object resolve(String ref) {
+            return nameToBean.get(ref).getPayload();
+        }
+
+        @Override
+        public boolean canResolve(String ref) {
+            return nameToBean.containsKey(ref);
+        }
+
+        @Override
+        public Class<?> lookupType(String ref) {
+            ResolvableBeanDefinition bean = nameToBean.get(ref);
+            if(bean != null) {
+                return bean.getType();
+            }
+            return null;
+        }
+
+        @Override
+        public List<Class<?>> getContainedTypes() {
+            return types;
+        }
+
+        @Override
+        public Object resolveType(Class<?> clazz) {
+            return classToBean.get(clazz).getPayload();
+        }
     }
 }
