@@ -56,7 +56,7 @@ public class ResolvableDependencyInstantiationOrdering {
         return types;
     }
 
-    private class SatisfactionChecker implements ReferenceResolutionContext {
+    private static class SatisfactionChecker implements ReferenceResolutionContext {
 
         private List<Class<?>> types;
         private Map<String, ResolvableBeanDefinition> nameToBean;

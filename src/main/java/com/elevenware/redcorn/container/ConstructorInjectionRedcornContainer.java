@@ -115,7 +115,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
         start();
     }
 
-    private class ContainerResolutionContext implements ReferenceResolutionContext {
+    private static class ContainerResolutionContext implements ReferenceResolutionContext {
         private final Map<String, ResolvableBeanDefinition> context;
         private final Map<Class<?>, ResolvableBeanDefinition> classContext;
 

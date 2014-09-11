@@ -1,11 +1,11 @@
 package com.elevenware.redcorn.container;
 
-import com.elevenware.redcorn.beans.DefaultBeanDefinition;
+import com.elevenware.redcorn.beans.ResolvableBeanDefinition;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class FactoryBeanDefinition extends DefaultBeanDefinition {
+public class FactoryBeanDefinition extends ResolvableBeanDefinition {
     private final String factoryMethod;
     private final Class factoryClass;
 

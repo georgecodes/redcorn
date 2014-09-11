@@ -171,4 +171,12 @@ public class TestResolvableBeanDefinition {
 
     }
 
+    @Test
+    public void definitionsAssumeClassNameAsNameByDefault() {
+
+        BeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        assertEquals(DependentBean.class.getCanonicalName(), definition.getName());
+
+    }
+
 }

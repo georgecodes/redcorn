@@ -9,7 +9,6 @@ import static org.junit.Assert.*;
 
 public class TestValueTypeConstructor {
 
-
     @Test
     public void addMultiProperties() {
 

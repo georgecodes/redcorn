@@ -1,9 +1,5 @@
 package com.elevenware.redcorn.container;
 
-import com.elevenware.redcorn.HasInjectableProperty;
-import com.elevenware.redcorn.SimpleBean;
-import com.elevenware.redcorn.beans.BeanDefinition;
-import com.elevenware.redcorn.beans.DefaultBeanDefinition;
 import org.junit.Test;
 
 public class TestSetterInjection {
@@ -53,7 +49,7 @@ public class TestSetterInjection {
     @Test
     public void canHydrateWithNoPropertiesAtAll() {
 
-        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+//        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
 
 //        assertTrue(definition.canHydrate());
 
@@ -62,7 +58,7 @@ public class TestSetterInjection {
     @Test
     public void canHydrateIfPropertiesSatisfied() {
 
-        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+//        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
 
 //        assertTrue(definition.canHydrate());
 
@@ -71,7 +67,7 @@ public class TestSetterInjection {
     @Test
     public void canNotHydrateIfUnresolvedReferenceProperties() {
 
-        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
+//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
 
 //        assertFalse(definition.canHydrate());
 
@@ -80,7 +76,7 @@ public class TestSetterInjection {
     @Test
     public void hydratesOnceReferencesResolved() {
 
-        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
+//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
 
 //        assertFalse(definition.canHydrate());
 //
@@ -93,7 +89,7 @@ public class TestSetterInjection {
 //    @Test( expected = RuntimeException.class)
     public void resolvingNonExistentPropertyFails() {
 
-        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
+//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
 
 //        assertFalse(definition.canHydrate());
 //
