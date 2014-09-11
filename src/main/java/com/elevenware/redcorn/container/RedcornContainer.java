@@ -1,8 +1,8 @@
 package com.elevenware.redcorn.container;
 
-import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.beans.BeanDefinition;
-import com.elevenware.redcorn.model.ReferenceResolutionContext;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
+import com.elevenware.redcorn.lifecycle.Lifecycle;
 
 public interface RedcornContainer extends Lifecycle {
     BeanDefinition register(Class clazz);

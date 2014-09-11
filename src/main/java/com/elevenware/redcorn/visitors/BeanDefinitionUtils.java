@@ -1,17 +1,16 @@
 package com.elevenware.redcorn.visitors;
 
-import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
 
 import java.util.Collection;
-import java.util.List;
 
 public class BeanDefinitionUtils {
 
-    static Collection<Class<?>> typesFrom(Collection<BeanDefinition> beans) {
-       return CollectionUtils.collectFrom(beans).collect(new Collector<BeanDefinition, Class<?>>() {
+    static Collection<Class<?>> typesFrom(Collection<ExtendedBeanDefinition> beans) {
+       return CollectionUtils.collectFrom(beans).collect(new Collector<ExtendedBeanDefinition, Class<?>>() {
 
             @Override
-            public Class<?> doCollect(BeanDefinition definition) {
+            public Class<?> doCollect(ExtendedBeanDefinition definition) {
                 return definition.getType();
             }
 

@@ -1,7 +1,6 @@
 package com.elevenware.redcorn.beans;
 
-import com.elevenware.redcorn.TypesMatcher;
-import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ConstructorInjectionModel;
 
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -136,7 +135,7 @@ public class ConstructorModel {
         return candidateConstructors.get(0);
     }
 
-    public Constructor findBestConstructorsForTypes(List<Class<?>> availableClasses, InjectableArgumentModel argumentModel) {
+    public Constructor findBestConstructorsForTypes(List<Class<?>> availableClasses, ConstructorInjectionModel argumentModel) {
         List<Class<?>> actualClasses = new ArrayList<>(availableClasses);
         actualClasses.addAll(argumentModel.getTypes());
         List<Constructor> candidateConstructors = findConstructorsForTypes(actualClasses);
@@ -147,7 +146,7 @@ public class ConstructorModel {
         return candidateConstructors.get(0);
     }
 
-    public boolean hasConstructorFor(InjectableArgumentModel injectionModel) {
+    public boolean hasConstructorFor(ConstructorInjectionModel injectionModel) {
 //        if(!injectionModel.isResolved()) {
 //            return false;
 //        }
@@ -155,19 +154,19 @@ public class ConstructorModel {
         return hasConstructorForClasses(classes);
     }
 
-    public void assertHasConstructorFor(InjectableArgumentModel injectableArgumentModel) {
-        if(!hasConstructorFor(injectableArgumentModel)) {
+    public void assertHasConstructorFor(ConstructorInjectionModel constructorInjectionModel) {
+        if(!hasConstructorFor(constructorInjectionModel)) {
             StringBuilder buf = new StringBuilder("Unable to resolve constructor for type ")
                     .append(this.type)
                     .append(" and arguments ")
-                    .append(injectableArgumentModel);
+                    .append(constructorInjectionModel);
             throw new RuntimeException(buf.toString());
         }
     }
 
-    public Constructor findConstructorFor(InjectableArgumentModel injectableArgumentModel) {
+    public Constructor findConstructorFor(ConstructorInjectionModel constructorInjectionModel) {
         for(Constructor constructor: constructors) {
-            if (isSuitableForClasses(constructor, injectableArgumentModel.getTypes())) {
+            if (isSuitableForClasses(constructor, constructorInjectionModel.getTypes())) {
                 return constructor;
             }
         }

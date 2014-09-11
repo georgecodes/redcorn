@@ -1,23 +1,23 @@
 package com.elevenware.redcorn.visitors;
 
-import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
 import com.elevenware.redcorn.model.ConcreteInjectableArgument;
 import com.elevenware.redcorn.model.InjectableArgument;
-import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 
 import java.util.*;
 
 public class BeanFilter {
 
-    private Set<BeanDefinition> remainder = new HashSet<>();
+    private Set<ExtendedBeanDefinition> remainder = new HashSet<>();
 
-    public List<BeanDefinition> filterByConcreteArgs(List<BeanDefinition> beans) {
-        List<BeanDefinition> filtered = new ArrayList<>();
-        for(BeanDefinition definition: beans) {
-            InjectableArgumentModel model = definition.getInjectionModel();
-            boolean toBeFiltered = model.getConstructorArgs().size() != 0;
-            for(InjectableArgument arg: model.getConstructorArgs()) {
+    public List<ExtendedBeanDefinition> filterByConcreteArgs(List<ExtendedBeanDefinition> beans) {
+        List<ExtendedBeanDefinition> filtered = new ArrayList<>();
+        for(ExtendedBeanDefinition definition: beans) {
+            ConstructorInjectionModel model = definition.getInjectionModel();
+            boolean toBeFiltered = model.getArguments().size() != 0;
+            for(InjectableArgument arg: model.getArguments()) {
                 if(!(ConcreteInjectableArgument.class.isAssignableFrom(arg.getClass()))) {
                     toBeFiltered = false;
                 }
@@ -31,12 +31,12 @@ public class BeanFilter {
         return filtered;
     }
 
-    public List<BeanDefinition> filterByReferenceArgs(List<BeanDefinition> beans) {
-        List<BeanDefinition> filtered = new ArrayList<>();
-        for(BeanDefinition definition: beans) {
-            InjectableArgumentModel model = definition.getInjectionModel();
-            boolean toBeFiltered = model.getConstructorArgs().size() != 0;
-            for(InjectableArgument arg: model.getConstructorArgs()) {
+    public List<ExtendedBeanDefinition> filterByReferenceArgs(List<ExtendedBeanDefinition> beans) {
+        List<ExtendedBeanDefinition> filtered = new ArrayList<>();
+        for(ExtendedBeanDefinition definition: beans) {
+            ConstructorInjectionModel model = definition.getInjectionModel();
+            boolean toBeFiltered = model.getArguments().size() != 0;
+            for(InjectableArgument arg: model.getArguments()) {
                 if(!(ReferenceInjectableArgument.class.isAssignableFrom(arg.getClass()))) {
                     toBeFiltered = false;
                 }
@@ -50,12 +50,12 @@ public class BeanFilter {
         return filtered;
     }
 
-    public List<BeanDefinition> filterByImplicitConstructorArgs(List<BeanDefinition> beans) {
-        List<BeanDefinition> filtered = new ArrayList<>();
+    public List<ExtendedBeanDefinition> filterByImplicitConstructorArgs(List<ExtendedBeanDefinition> beans) {
+        List<ExtendedBeanDefinition> filtered = new ArrayList<>();
         Collection<Class<?>> typesAvailable = BeanDefinitionUtils.typesFrom(beans);
-        for(final BeanDefinition definition: beans) {
-            InjectableArgumentModel model = definition.getInjectionModel();
-            if( model.getConstructorArgs().size() != 0) {
+        for(final ExtendedBeanDefinition definition: beans) {
+            ConstructorInjectionModel model = definition.getInjectionModel();
+            if( model.getArguments().size() != 0) {
                 remainder.add(definition);
                 continue;
             }
@@ -71,7 +71,7 @@ public class BeanFilter {
         return filtered;
     }
 
-    public Set<BeanDefinition> getRemainder() {
+    public Set<ExtendedBeanDefinition> getRemainder() {
         return remainder;
     }
 

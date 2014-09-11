@@ -4,21 +4,19 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
 
-public class InjectableArgumentModel implements Iterable<InjectableArgument> {
+public class ConstructorInjectionModel implements Iterable<InjectableArgument> {
     private ReferenceResolutionContext context;
-    private List<InjectableArgument> constructorArgs;
-    private Object[] inflatedConstructorArgs;
+    private List<InjectableArgument> arguments;
+    private Object[] inflatedArguments;
 
-    public InjectableArgumentModel(ReferenceResolutionContext context) {
+    public ConstructorInjectionModel(ReferenceResolutionContext context) {
         this();
         this.context = context;
     }
 
-    public InjectableArgumentModel() {
-        this.constructorArgs = new ArrayList<>();
+    public ConstructorInjectionModel() {
+        this.arguments = new ArrayList<>();
     }
 
     public void setContext(ReferenceResolutionContext ctx) {
@@ -30,24 +28,24 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
         if(ReferenceInjectableArgument.class.isAssignableFrom(injectableArgument.getClass())) {
             ((ReferenceInjectableArgument) injectableArgument).setContext(context);
         }
-        constructorArgs.add(injectableArgument);
+        arguments.add(injectableArgument);
     }
 
-    public List<InjectableArgument> getConstructorArgs() {
-        return constructorArgs;
+    public List<InjectableArgument> getArguments() {
+        return arguments;
     }
 
-    public Object[] getInflatedConstructorArgs() {
-        if(inflatedConstructorArgs == null) {
-            inflatedConstructorArgs = inflateConstructorArgs();
+    public Object[] getInflatedArguments() {
+        if(inflatedArguments == null) {
+            inflatedArguments = inflateConstructorArgs();
         }
-        return inflatedConstructorArgs;
+        return inflatedArguments;
     }
 
     public Object[] inflateConstructorArgs() {
 
         List<Object> inflatedArgs = new ArrayList<>();
-        for(InjectableArgument arg: constructorArgs) {
+        for(InjectableArgument arg: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(arg.getClass())) {
                 ((ReferenceInjectableArgument) arg).setContext(context);
             }
@@ -59,10 +57,10 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
     }
 
     public boolean matchesConstructorArgumentsInOrder(Constructor constructor) {
-        if(constructor.getParameterTypes().length != constructorArgs.size()) {
+        if(constructor.getParameterTypes().length != arguments.size()) {
             return false;
         }
-        Iterator<InjectableArgument> iter = constructorArgs.iterator();
+        Iterator<InjectableArgument> iter = arguments.iterator();
         for(Class clazz: constructor.getParameterTypes()) {
             InjectableArgument arg = iter.next();
             if(!arg.compatibleWith(clazz)) {
@@ -74,14 +72,14 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
 
     public List<Class<?>> getTypes() {
         List<Class<?>> types = new ArrayList<>();
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             types.add(argument.getType());
         }
         return types;
     }
 
     public boolean isResolved() {
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             if(argument.getPayload() == null) {
                 return false;
             }
@@ -91,7 +89,7 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
 
     public List<Object> getConcreteConstructorArgs() {
         List<Object> concreteConstructorArgs = new ArrayList<>();
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             if(ConcreteInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 concreteConstructorArgs.add(argument.getPayload());
             }
@@ -101,11 +99,11 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
 
     @Override
     public Iterator<InjectableArgument> iterator() {
-        return constructorArgs.iterator();
+        return arguments.iterator();
     }
 
     public boolean canResolve() {
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 ((ReferenceInjectableArgument) argument).setContext(context);
                 if(!argument.canResolve()) {
@@ -118,7 +116,7 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
 
     public List<Class<?>> getConfiguredTypes() {
         List<Class<?>> types = new ArrayList<>();
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 ((ReferenceInjectableArgument) argument).setContext(context);
             }
@@ -128,7 +126,7 @@ public class InjectableArgumentModel implements Iterable<InjectableArgument> {
     }
 
     private void rewireResolutionContext(ReferenceResolutionContext context) {
-        for(InjectableArgument argument: constructorArgs) {
+        for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 ((ReferenceInjectableArgument) argument).setContext(context);
             }

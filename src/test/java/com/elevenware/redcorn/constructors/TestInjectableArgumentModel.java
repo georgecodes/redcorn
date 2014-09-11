@@ -21,7 +21,7 @@ public class TestInjectableArgumentModel {
         when(context.resolve("server.name")).thenReturn("The name");
         when(context.resolve("server")).thenReturn(new SimpleBean());
 
-        InjectableArgumentModel model = new InjectableArgumentModel(context);
+        ConstructorInjectionModel model = new ConstructorInjectionModel(context);
 
         model.addConstructorArg(new ConcreteInjectableArgument(203));
         model.addConstructorArg(new ReferenceInjectableArgument("server.name", String.class));
@@ -31,7 +31,7 @@ public class TestInjectableArgumentModel {
 
         for(Constructor constructor: TheBean.class.getConstructors()) {
             if(model.matchesConstructorArgumentsInOrder(constructor)) {
-                bean = (TheBean) constructor.newInstance(model.getInflatedConstructorArgs());
+                bean = (TheBean) constructor.newInstance(model.getInflatedArguments());
             }
         }
 

@@ -4,10 +4,9 @@ import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.beans.ConstructorModel;
 import com.elevenware.redcorn.model.ConcreteInjectableArgument;
-import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
-import com.elevenware.redcorn.visitors.CollectionUtils;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;
@@ -80,7 +79,7 @@ public class TestConstructorModel {
     @Test
     public void findsConstructorBasedOnConcreteInjectableArgs() {
 
-        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        ConstructorInjectionModel injectionModel = new ConstructorInjectionModel();
         injectionModel.addConstructorArg(new ConcreteInjectableArgument(new SimpleBean()));
 
         ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
@@ -92,7 +91,7 @@ public class TestConstructorModel {
     @Test
     public void findsConstructorBasedOnTypeSpecifiedReferenceInjectableArgs() {
 
-        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        ConstructorInjectionModel injectionModel = new ConstructorInjectionModel();
         injectionModel.addConstructorArg(new ReferenceInjectableArgument("simple.bean", SimpleBean.class));
 
         ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
@@ -107,7 +106,7 @@ public class TestConstructorModel {
         when(context.resolve("simple.bean")).thenReturn(new SimpleBean());
         Class type = SimpleBean.class;
         when(context.lookupType("simple.bean")).thenReturn(type);
-        InjectableArgumentModel injectionModel = new InjectableArgumentModel();
+        ConstructorInjectionModel injectionModel = new ConstructorInjectionModel();
         ReferenceInjectableArgument arg = new ReferenceInjectableArgument("simple.bean");
         injectionModel.setContext(context);
 

@@ -1,11 +1,8 @@
 package com.elevenware.redcorn.container;
 
-import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
 import com.elevenware.redcorn.beans.ConstructorModel;
-import com.elevenware.redcorn.container.ConstructorInjectionRedcornContainer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 public class ConfigurableRedcornContainer extends ConstructorInjectionRedcornContainer {
@@ -31,11 +28,11 @@ public class ConfigurableRedcornContainer extends ConstructorInjectionRedcornCon
         super.start();
     }
 
-    private void replaceConstructorRefWithValue(BeanDefinition definition, String ref, Object value, int position, int size) {
+    private void replaceConstructorRefWithValue(ExtendedBeanDefinition definition, String ref, Object value, int position, int size) {
         ConstructorModel constructorModel = definition.getConstructorModel();
 //        constructorModel.?
 
-        definition.addContructorArg(value);
+        definition.addConstructorArg(value);
 
     }
 }

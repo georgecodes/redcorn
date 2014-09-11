@@ -1,14 +1,7 @@
 package com.elevenware.redcorn.beans;
 
-import com.elevenware.redcorn.model.InjectableArgumentModel;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
-import com.elevenware.redcorn.visitors.BeanDefinitionVisitor;
 
-import java.util.List;
-
-/**
- * Represents as abstract definition of a managed object in the container.
- */
 public interface BeanDefinition {
 
     /**
@@ -27,16 +20,18 @@ public interface BeanDefinition {
      */
     boolean canInstantiate();
 
-    /**
-     * Returns the specific concrete type represented by this bean definition
-     */
-    void instantiate();
 
     /**
      * Actually instantiates the bean. If there are configured constructor arguments
      * then the constructor must be satisfied.
      *
      * @return java.lang.Class
+     */
+    void instantiate();
+
+
+    /**
+     * Returns the specific concrete type represented by this bean definition
      */
     Class getType();
 
@@ -49,6 +44,8 @@ public interface BeanDefinition {
      */
     Object getPayload();
 
+    void setResolutionContext(ReferenceResolutionContext resolutionContext);
+
     /**
      * Adds a constructor argument to this bean definition. The container will attempt to get
      * a constructor for <bold>all</bold> of the arguments defined in a bean. The container will
@@ -57,58 +54,12 @@ public interface BeanDefinition {
      *
      * @param object - the instance for configuration
      */
-    BeanDefinition addContructorArg(Object object);
-
-    /**
-     * Returns the list of constructor arguments configured.
-     * @return java.util.List
-     */
-    List<Object> getConstructorArgs();
-
-    /**
-     * Allows for visitation by {@link com.elevenware.redcorn.visitors.BeanDefinitionVisitor}
-     *
-     * @param visitor
-     */
-    void accept(BeanDefinitionVisitor visitor);
-
-    /**
-     * Returns the {@link com.elevenware.redcorn.beans.ConstructorModel} for this
-     * definition.
-     *
-     * @return {@link com.elevenware.redcorn.beans.ConstructorModel}
-     */
-    ConstructorModel getConstructorModel();
-
-    /**
-     * Returns whether or not all the dependencies of this definition
-     * have been resolved.
-     */
-     boolean isResolved();
-
-    /**
-     * Marks this bean as having all dependencies resolved.
-     */
-     void markResolved();
-
+    BeanDefinition addConstructorArg(Object object);
+    BeanDefinition addConstructorRef(String other);
+    BeanDefinition addConstructorRef(String other, Class<?> type);
+    BeanDefinition addConstructorRef(Class<?> clazz);
+    void prepare();
     String getName();
+    boolean isSatisfied();
 
-    BeanDefinition addConstructorRef(String reference);
-    List<String> getConstructorRefs();
-
-    BeanDefinition addProperty(String name, Object value);
-
-    BeanDefinition reference(String other);
-
-    boolean canHydrate();
-
-    BeanDefinition resolve(String name, Object dependency);
-
-    void setResolutionContext(ReferenceResolutionContext context);
-
-    InjectableArgumentModel getInjectionModel();
-
-    DefaultBeanDefinition addConstructorRef(String second, Class<?> type);
-
-    void inflateConstructorArgs();
 }

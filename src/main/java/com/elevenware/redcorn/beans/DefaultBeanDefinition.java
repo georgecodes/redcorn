@@ -1,7 +1,7 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.model.ConcreteInjectableArgument;
-import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import com.elevenware.redcorn.visitors.BeanDefinitionVisitor;
@@ -22,7 +22,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private final Class type;
     private final List<Object> constructorArgs;
     private final List<String> namedConstructorRefs;
-    private final InjectableArgumentModel injectableArgumentModel;
+    private final ConstructorInjectionModel constructorInjectionModel;
     private Object payload;
     private ConstructorModel constructorModel;
     private boolean resolved;
@@ -43,16 +43,16 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.namedConstructorRefs = new ArrayList<>();
         this.referenceProperties = new ArrayList<>();
         this.properties = new HashMap<>();
-        this.injectableArgumentModel = new InjectableArgumentModel();
+        this.constructorInjectionModel = new ConstructorInjectionModel();
     }
 
     @Override
     public void instantiate() {
-        injectableArgumentModel.inflateConstructorArgs();
-        constructorModel.assertHasConstructorFor(injectableArgumentModel);
-        Constructor constructor = constructorModel.findConstructorFor(injectableArgumentModel);
+        constructorInjectionModel.inflateConstructorArgs();
+        constructorModel.assertHasConstructorFor(constructorInjectionModel);
+        Constructor constructor = constructorModel.findConstructorFor(constructorInjectionModel);
         try {
-            payload = constructor.newInstance(injectableArgumentModel.getInflatedConstructorArgs());
+            payload = constructor.newInstance(constructorInjectionModel.getInflatedArguments());
             hydratePayload();
         } catch (InstantiationException e) {
             e.printStackTrace();
@@ -112,32 +112,28 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     @Override
     public boolean canInstantiate() {
-        return constructorModel.hasConstructorFor(injectableArgumentModel);
+        return constructorModel.hasConstructorFor(constructorInjectionModel);
     }
 
     @Override
-    public BeanDefinition addContructorArg(Object object) {
+    public BeanDefinition addConstructorArg(Object object) {
 //        this.constructorArgs.add(object);
-        injectableArgumentModel.addConstructorArg(new ConcreteInjectableArgument(object));
+        constructorInjectionModel.addConstructorArg(new ConcreteInjectableArgument(object));
         return this;
     }
 
-    @Override
     public List<Object> getConstructorArgs() {
-        return injectableArgumentModel.getConcreteConstructorArgs();
+        return constructorInjectionModel.getConcreteConstructorArgs();
     }
 
-    @Override
     public void accept(BeanDefinitionVisitor visitor) {
-        visitor.visit(this);
+        visitor.visit(null);
     }
 
-    @Override
     public ConstructorModel getConstructorModel() {
         return constructorModel;
     }
 
-    @Override
     public void markResolved() {
         this.resolved = true;
     }
@@ -148,48 +144,57 @@ public class DefaultBeanDefinition implements BeanDefinition {
     }
 
     @Override
+    public boolean isSatisfied() {
+        return false;
+    }
+
+    @Override
     public BeanDefinition addConstructorRef(String reference) {
 //        this.namedConstructorRefs.add(reference);
-        injectableArgumentModel.addConstructorArg(new ReferenceInjectableArgument(reference));
+        constructorInjectionModel.addConstructorArg(new ReferenceInjectableArgument(reference));
         return this;
     }
 
     @Override
-    public DefaultBeanDefinition addConstructorRef(String reference, Class<?> type) {
-        injectableArgumentModel.addConstructorArg(new ReferenceInjectableArgument(reference, type));
+    public BeanDefinition addConstructorRef(String reference, Class<?> type) {
+        constructorInjectionModel.addConstructorArg(new ReferenceInjectableArgument(reference, type));
         return this;
     }
 
     @Override
+    public BeanDefinition addConstructorRef(Class<?> clazz) {
+        return null;
+    }
+
+    @Override
+    public void prepare() {
+
+    }
+
     public void inflateConstructorArgs() {
-        for(Object object: injectableArgumentModel.getInflatedConstructorArgs()) {
+        for(Object object: constructorInjectionModel.getInflatedArguments()) {
             constructorArgs.add(object);
         }
     }
 
-    @Override
     public List<String> getConstructorRefs() {
         return namedConstructorRefs;
     }
 
-    @Override
     public BeanDefinition addProperty(String name, Object value) {
         this.properties.put(name, value);
         return this;
     }
 
-    @Override
     public BeanDefinition reference(String other) {
         this.referenceProperties.add(other);
         return this;
     }
 
-    @Override
     public boolean canHydrate() {
         return this.referenceProperties.isEmpty();
     }
 
-    @Override
     public BeanDefinition resolve(String name, Object dependency) {
         addProperty(name, dependency);
         if(!this.referenceProperties.remove(name)) {
@@ -201,17 +206,15 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public void setResolutionContext(ReferenceResolutionContext context) {
         this.resolutionContext = context;
-        this.injectableArgumentModel.setContext(context);
+        this.constructorInjectionModel.setContext(context);
     }
 
-    @Override
-    public InjectableArgumentModel getInjectionModel() {
-        return injectableArgumentModel;
+    public ConstructorInjectionModel getInjectionModel() {
+        return constructorInjectionModel;
     }
 
 
 
-    @Override
     public boolean isResolved() {
         return resolved;
     }

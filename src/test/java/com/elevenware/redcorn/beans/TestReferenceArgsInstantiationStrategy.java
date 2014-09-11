@@ -2,7 +2,7 @@ package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
-import com.elevenware.redcorn.model.InjectableArgumentModel;
+import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;
@@ -21,7 +21,7 @@ public class TestReferenceArgsInstantiationStrategy {
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
         when(context.resolve("the.bean")).thenReturn(new SimpleBean());
 
-        InjectableArgumentModel model = new InjectableArgumentModel();
+        ConstructorInjectionModel model = new ConstructorInjectionModel();
         model.setContext(context);
         model.addConstructorArg(new ReferenceInjectableArgument("the.bean"));
         Constructor constructor = DependentBean.class.getDeclaredConstructor(new Class[] {SimpleBean.class });

@@ -4,13 +4,13 @@ import com.elevenware.redcorn.model.*;
 
 import java.lang.reflect.Constructor;
 
-public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
+public class ResolvableBeanDefinition implements BeanDefinition {
 
 
     private final Class<?> type;
     private final String name;
     private final ConstructorModel constructorModel;
-    private InjectableArgumentModel constructorArguments;
+    private ConstructorInjectionModel constructorArguments;
     private Object payload;
     private ReferenceResolutionContext resolutionContext;
     private InstantiationStrategy instantiationStrategy;
@@ -23,7 +23,7 @@ public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
         this.type = type;
         this.name = name;
         this.constructorModel = new ConstructorModel(type);
-        this.constructorArguments = new InjectableArgumentModel();
+        this.constructorArguments = new ConstructorInjectionModel();
     }
 
     @Override
@@ -104,10 +104,10 @@ public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
     }
 
     private boolean explicitConstructorArgumentsConfigured() {
-        return constructorArguments.getConstructorArgs().size() > 0;
+        return constructorArguments.getArguments().size() > 0;
     }
 
-    private void createInstantiationStrategyFrom(InjectableArgumentModel constructorArguments) {
+    private void createInstantiationStrategyFrom(ConstructorInjectionModel constructorArguments) {
         boolean allConcrete = true;
         boolean allReferenceCanResolve = true;
         for(InjectableArgument argument: constructorArguments) {
@@ -150,7 +150,4 @@ public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
         return null;
     }
 
-    public void addProperty(String name, String s) {
-
-    }
 }

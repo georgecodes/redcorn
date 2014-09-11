@@ -1,8 +1,8 @@
 package com.elevenware.redcorn.container;
 
-import com.elevenware.redcorn.DependencyInstantiationOrdering;
-import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
+import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.beans.DefaultBeanDefinition;
 import com.elevenware.redcorn.lifecycle.ContainerAware;
 import com.elevenware.redcorn.visitors.AbstractBeanDefinitionVisitor;
@@ -73,9 +73,9 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
     private void hydrateNewBeans() {
 
-        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
-        List<BeanDefinition> dependencyChain = ordering.sort();
-        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
+//        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
+//        List<ExtendedBeanDefinition> dependencyChain = ordering.sort();
+//        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
 
         for(BeanDefinition definition: context.values()) {
             if(Lifecycle.class.isAssignableFrom(definition.getType())) {
@@ -114,9 +114,9 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
         containerDef.instantiate();
         RedcornContainer child = (RedcornContainer) containerDef.getPayload();
         for(BeanDefinition bean: this.context.values()) {
-            child.addDefinition(bean);
+            child.addDefinition(null);
         }
-        containerDef.markResolved();
+//        containerDef.markResolved();
         this.context.put(name, containerDef);
         child.start();
         return child;
@@ -143,9 +143,9 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     @Override
     public void start() {
         log.trace("Starting container " + this);
-        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
-        List<BeanDefinition> dependencyChain = ordering.sort();
-        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
+//        DependencyInstantiationOrdering ordering = new DependencyInstantiationOrdering(this.registeredTypes);
+//        List<ExtendedBeanDefinition> dependencyChain = ordering.sort();
+//        AbstractBeanDefinitionVisitor.constructorArgsInstantiator(this).visitAll(dependencyChain);
         for(BeanDefinition definition: context.values()) {
             if(Lifecycle.class.isAssignableFrom(definition.getType())) {
                 Lifecycle lifecycle = (Lifecycle) definition.getPayload();

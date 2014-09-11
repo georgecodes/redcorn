@@ -155,8 +155,8 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canRegisterMoreThanOneBeanOfType() {
 
-        container.register("first", NamedBean.class).addContructorArg("first bean");
-        container.register("second", NamedBean.class).addContructorArg("second bean");
+        container.register("first", NamedBean.class).addConstructorArg("first bean");
+        container.register("second", NamedBean.class).addConstructorArg("second bean");
 
         container.start();
 
@@ -171,8 +171,8 @@ public class TestConstructorInjectionContainer {
     @Test
     public void registeringByClassAgainOverwritesFirstBean() {
 
-        container.register(NamedBean.class).addContructorArg("first bean");
-        container.register(NamedBean.class).addContructorArg("second bean");
+        container.register(NamedBean.class).addConstructorArg("first bean");
+        container.register(NamedBean.class).addConstructorArg("second bean");
 
         container.start();
 
@@ -185,8 +185,8 @@ public class TestConstructorInjectionContainer {
     @Test( expected = RuntimeException.class)
     public void throwsExceptionIfAmbiguousConstructorArgs() {
 
-        container.register("first", NamedBean.class).addContructorArg("first bean");
-        container.register("second", NamedBean.class).addContructorArg("second bean");
+        container.register("first", NamedBean.class).addConstructorArg("first bean");
+        container.register("second", NamedBean.class).addConstructorArg("second bean");
         container.register(HasNamedBeanArg.class);
 
         container.start();
@@ -196,8 +196,8 @@ public class TestConstructorInjectionContainer {
     @Test
     public void canGiveNamedConstructorArgs() {
 
-        container.register("first", NamedBean.class).addContructorArg("first bean");
-        container.register("second", NamedBean.class).addContructorArg("second bean");
+        container.register("first", NamedBean.class).addConstructorArg("first bean");
+        container.register("second", NamedBean.class).addConstructorArg("second bean");
         container.register(HasNamedBeanArg.class).addConstructorRef("second", NamedBean.class);
 
         container.start();
@@ -206,17 +206,6 @@ public class TestConstructorInjectionContainer {
         assertNotNull(bean);
 
         assertEquals("second bean", bean.getBean().getName());
-
-    }
-
-    @Test
-    public void populatesProperties() {
-
-        container.register(SimpleBean.class).addProperty("name", "this is injected");
-        container.start();
-        SimpleBean bean = container.find(SimpleBean.class);
-        assertNotNull(bean);
-        assertEquals("this is injected", bean.getName());
 
     }
 
@@ -241,17 +230,5 @@ public class TestConstructorInjectionContainer {
 
     }
 
-    @Test
-    public void canStillAddBeansAfterContainerStarted() {
-
-        container.register("before", SimpleBean.class).addProperty("name", "this is injected prior to start");
-        container.start();
-        container.register("after", SimpleBean.class).addProperty("name", "this is injected after start");
-
-        SimpleBean bean = container.find("after");
-        assertNotNull(bean);
-        assertEquals("this is injected after start", bean.getName());
-
-    }
 
 }

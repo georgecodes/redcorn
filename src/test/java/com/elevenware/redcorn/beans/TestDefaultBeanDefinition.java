@@ -30,7 +30,7 @@ public class TestDefaultBeanDefinition {
         BeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         assertFalse(definition.canInstantiate());
         SimpleBean simpleBean = new SimpleBean();
-        definition.addContructorArg(simpleBean);
+        definition.addConstructorArg(simpleBean);
 
         assertTrue(definition.canInstantiate());
         definition.instantiate();

@@ -33,7 +33,7 @@ public class TestFactoryBean {
 
         container.register(SimpleBean.class);
         container.registerFactory("fooService", "createFooService", FooServiceFactory.class)
-                .addContructorArg(message);
+                .addConstructorArg(message);
 
         container.start();
 

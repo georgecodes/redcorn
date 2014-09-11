@@ -32,7 +32,7 @@ public class TestHelloWorldApplication {
         RedcornContainer container = new ConstructorInjectionRedcornContainer();
         container.register("app", HelloWorldApplication.class);
         container.register(MessageFactoryImpl.class);
-        container.register(CustomMessageProducer.class).addContructorArg(message);
+        container.register(CustomMessageProducer.class).addConstructorArg(message);
 
         container.start();
 

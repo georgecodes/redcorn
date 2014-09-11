@@ -1,10 +1,10 @@
 package com.elevenware.redcorn.visitors;
 
-import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
 
 public interface BeanDefinitionVisitor {
 
-    void visit(BeanDefinition definition);
-    void visitAll(Iterable<BeanDefinition> definitions);
+    void visit(ExtendedBeanDefinition definition);
+    void visitAll(Iterable<ExtendedBeanDefinition> definitions);
 
 }

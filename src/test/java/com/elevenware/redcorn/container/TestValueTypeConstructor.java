@@ -15,7 +15,7 @@ public class TestValueTypeConstructor {
         RedcornContainer container = new ConstructorInjectionRedcornContainer();
         container.register(SimpleBean.class);
         container.register(DependentBean.class)
-                .addContructorArg("hello");
+                .addConstructorArg("hello");
 
         container.start();
 
@@ -32,8 +32,8 @@ public class TestValueTypeConstructor {
 
         RedcornContainer container = new ConstructorInjectionRedcornContainer();
         container.register(MultipleOfSame.class)
-                .addContructorArg("hello")
-                .addContructorArg("world");
+                .addConstructorArg("hello")
+                .addConstructorArg("world");
 
         container.start();
 

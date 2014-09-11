@@ -199,17 +199,6 @@ public class TestResolvableContainer {
     }
 
     @Test
-    public void populatesProperties() {
-
-        container.register(SimpleBean.class).addProperty("name", "this is injected");
-        container.start();
-        SimpleBean bean = container.find(SimpleBean.class);
-        assertNotNull(bean);
-        assertEquals("this is injected", bean.getName());
-
-    }
-
-    @Test
     public void resolvesMultipleConstructorRefs() {
 
         container.register("foo", FooHandler.class)
@@ -243,5 +232,6 @@ public class TestResolvableContainer {
         assertEquals("this is injected after start", bean.getName());
 
     }
+
 
 }
