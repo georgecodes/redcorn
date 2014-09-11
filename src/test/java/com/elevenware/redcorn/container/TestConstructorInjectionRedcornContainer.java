@@ -7,13 +7,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestResolvableContainer {
+public class TestConstructorInjectionRedcornContainer {
 
-    private ResolvableContainer container;
+    private ConstructorInjectionRedcornContainer container;
 
     @Before
     public void setup() {
-        this.container = new ResolvableContainer();
+        this.container = new ConstructorInjectionRedcornContainer();
     }
 
     @Test( expected = ContainerNotStartedException.class )

@@ -1,21 +1,17 @@
 package com.elevenware.redcorn.container;
 
 import com.elevenware.redcorn.beans.BeanDefinition;
-import com.elevenware.redcorn.beans.ExtendedBeanDefinition;
+import com.elevenware.redcorn.beans.ResolvableBeanDefinition;
 import com.elevenware.redcorn.lifecycle.Lifecycle;
 
-public interface RedcornContainer extends Lifecycle {
-    BeanDefinition register(Class clazz);
+public interface RedcornContainer extends Lifecycle{
+
+    BeanDefinition register(Class<?> clazz);
+    BeanDefinition register(String name, Class<?> type);
     <T> T get(Class<T> clazz);
-    <T> T get(String canonicalName);
-    java.util.Collection<BeanDefinition> getBeanDefinitions();
-    void addDefinition(BeanDefinition definition);
-    BeanDefinition register(String name, Class clazz);
+    <T> T get(String name);
     <T> T find(String name);
-    <T> T find(Class clazz);
-
-    RedcornContainer createChild(String name);
-
-    BeanDefinition registerFactory(String name, String factoryMethod, Class factoryClass);
+    <T> T find(Class<T> clazz);
+    void refresh();
 
 }

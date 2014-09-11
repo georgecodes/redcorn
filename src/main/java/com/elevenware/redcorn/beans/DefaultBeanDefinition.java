@@ -4,7 +4,6 @@ import com.elevenware.redcorn.model.ConcreteInjectableArgument;
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
-import com.elevenware.redcorn.visitors.BeanDefinitionVisitor;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -122,22 +121,6 @@ public class DefaultBeanDefinition implements BeanDefinition {
         return this;
     }
 
-    public List<Object> getConstructorArgs() {
-        return constructorInjectionModel.getConcreteConstructorArgs();
-    }
-
-    public void accept(BeanDefinitionVisitor visitor) {
-        visitor.visit(null);
-    }
-
-    public ConstructorModel getConstructorModel() {
-        return constructorModel;
-    }
-
-    public void markResolved() {
-        this.resolved = true;
-    }
-
     @Override
     public String getName() {
         return name;
@@ -171,52 +154,10 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     }
 
-    public void inflateConstructorArgs() {
-        for(Object object: constructorInjectionModel.getInflatedArguments()) {
-            constructorArgs.add(object);
-        }
-    }
-
-    public List<String> getConstructorRefs() {
-        return namedConstructorRefs;
-    }
-
-    public BeanDefinition addProperty(String name, Object value) {
-        this.properties.put(name, value);
-        return this;
-    }
-
-    public BeanDefinition reference(String other) {
-        this.referenceProperties.add(other);
-        return this;
-    }
-
-    public boolean canHydrate() {
-        return this.referenceProperties.isEmpty();
-    }
-
-    public BeanDefinition resolve(String name, Object dependency) {
-        addProperty(name, dependency);
-        if(!this.referenceProperties.remove(name)) {
-            throw new RuntimeException("Tried to resolve unknown property " + name);
-        }
-        return this;
-    }
-
     @Override
     public void setResolutionContext(ReferenceResolutionContext context) {
         this.resolutionContext = context;
         this.constructorInjectionModel.setContext(context);
-    }
-
-    public ConstructorInjectionModel getInjectionModel() {
-        return constructorInjectionModel;
-    }
-
-
-
-    public boolean isResolved() {
-        return resolved;
     }
 
     public String toString() {
