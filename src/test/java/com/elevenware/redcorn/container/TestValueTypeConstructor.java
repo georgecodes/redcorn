@@ -9,23 +9,6 @@ import static org.junit.Assert.*;
 
 public class TestValueTypeConstructor {
 
-    @Test
-    public void addProperties() {
-
-        RedcornContainer container = new ConstructorInjectionRedcornContainer();
-        container.register(SimpleBean.class);
-        container.register(DependentBean.class)
-                .addConstructorArg("hello");
-
-        container.start();
-
-        DependentBean bean = container.get(DependentBean.class);
-        assertNotNull(bean);
-
-        assertEquals("hello", bean.getMessage());
-        assertNotNull(bean.getSimpleBean());
-
-    }
 
     @Test
     public void addMultiProperties() {
