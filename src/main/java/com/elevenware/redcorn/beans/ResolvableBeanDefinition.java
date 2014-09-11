@@ -6,6 +6,7 @@ import java.lang.reflect.Constructor;
 
 public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
 
+
     private final Class<?> type;
     private final String name;
     private final ConstructorModel constructorModel;
@@ -143,5 +144,13 @@ public class ResolvableBeanDefinition implements IResolvableBeanDefinition {
     @Override
     public boolean isSatisfied() {
         return instantiationStrategy.isSatisfied();
+    }
+
+    public ResolvableBeanDefinition addConstructorRef(String name, Class<?> type) {
+        return null;
+    }
+
+    public void addProperty(String name, String s) {
+
     }
 }

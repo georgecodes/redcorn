@@ -103,7 +103,19 @@ public class ResolvableDependencyInstantiationOrdering {
 
         @Override
         public Object resolveType(Class<?> clazz) {
-            return classToBean.get(clazz).getPayload();
+            List<ResolvableBeanDefinition> candidates = new ArrayList<>();
+            for(Map.Entry<Class, ResolvableBeanDefinition> entry: classToBean.entrySet()) {
+                if(clazz.isAssignableFrom(entry.getKey())) {
+                    candidates.add(entry.getValue());
+                }
+            }
+            if(candidates.size()==0) {
+                throw new RuntimeException("Unresolvab;e");
+            }
+            if(candidates.size() > 1) {
+                throw new RuntimeException("Too many candidates");
+            }
+            return candidates.get(0).getPayload();
         }
     }
 }
