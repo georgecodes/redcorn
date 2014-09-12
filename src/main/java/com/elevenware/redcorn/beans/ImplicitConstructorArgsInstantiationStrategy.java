@@ -1,6 +1,6 @@
 package com.elevenware.redcorn.beans;
 
-import com.elevenware.redcorn.TypesMatcher;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 
 import java.lang.reflect.Constructor;

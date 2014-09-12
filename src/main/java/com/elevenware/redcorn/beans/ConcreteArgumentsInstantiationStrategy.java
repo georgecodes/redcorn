@@ -1,6 +1,7 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

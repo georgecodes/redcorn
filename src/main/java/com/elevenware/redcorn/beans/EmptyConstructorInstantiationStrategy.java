@@ -1,6 +1,6 @@
 package com.elevenware.redcorn.beans;
 
-import java.util.List;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 
 public class EmptyConstructorInstantiationStrategy implements InstantiationStrategy {
     private final Class<?> typeToInstantiate;

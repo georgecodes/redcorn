@@ -1,6 +1,7 @@
-package com.elevenware.redcorn.visitors;
+package com.elevenware.redcorn.utils;
 
 import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.visitors.Collector;
 
 import java.util.Collection;
 

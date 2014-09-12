@@ -3,6 +3,8 @@ package com.elevenware.redcorn.beans;
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.factories.FooService;
+import com.elevenware.redcorn.model.ConstructorModel;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;
 

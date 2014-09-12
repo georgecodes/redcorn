@@ -1,9 +1,9 @@
 package com.elevenware.redcorn.visitors;
 
-import java.util.ArrayList;
+import com.elevenware.redcorn.utils.CollectionUtils;
+
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 public class CollectingIterable<T, R> implements Collection<R> {
     private final Collection<T> delegate;

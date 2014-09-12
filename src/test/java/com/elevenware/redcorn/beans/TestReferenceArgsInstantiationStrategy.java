@@ -3,6 +3,7 @@ package com.elevenware.redcorn.beans;
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.elevenware.redcorn.beans;
+package com.elevenware.redcorn.model;
 
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
 

@@ -1,8 +1,8 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.DependentBean;
-import com.elevenware.redcorn.Simple;
 import com.elevenware.redcorn.SimpleBean;
+import com.elevenware.redcorn.model.InstantiationStrategy;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

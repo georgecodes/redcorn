@@ -2,7 +2,7 @@ package com.elevenware.redcorn.constructors;
 
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
-import com.elevenware.redcorn.beans.ConstructorModel;
+import com.elevenware.redcorn.model.ConstructorModel;
 import com.elevenware.redcorn.model.ConcreteInjectableArgument;
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
 import com.elevenware.redcorn.model.ReferenceInjectableArgument;

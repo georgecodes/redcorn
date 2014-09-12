@@ -1,4 +1,6 @@
-package com.elevenware.redcorn.visitors;
+package com.elevenware.redcorn.utils;
+
+import com.elevenware.redcorn.visitors.WrappedCollection;
 
 import java.util.*;
 
