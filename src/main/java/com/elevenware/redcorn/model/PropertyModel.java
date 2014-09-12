@@ -1,6 +1,9 @@
 package com.elevenware.redcorn.model;
 
+import com.elevenware.redcorn.beans.BeanInstantiationException;
+
 import java.beans.*;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,8 +43,28 @@ public class PropertyModel {
         return properties.containsKey(name);
     }
 
-    private class PropertyDefinition {
+    public PropertyDefinition getProperty(String name) {
+        return properties.get(name);
+    }
+
+    public class PropertyDefinition {
+        private final String name;
+        private final Method writeMethod;
+
+
         public PropertyDefinition(String name, Method writeMethod) {
+            this.name = name;
+            this.writeMethod = writeMethod;
+        }
+
+        public void setProperty(Object payload, Object value) {
+            try {
+                writeMethod.invoke(payload, value);
+            } catch (IllegalAccessException e) {
+                throw new BeanInstantiationException("Cannot set property " + name + " on " + payload, e);
+            } catch (InvocationTargetException e) {
+                throw new BeanInstantiationException("Cannot set property " + name + " on " + payload, e);
+            }
 
         }
     }

@@ -1,5 +1,8 @@
 package com.elevenware.redcorn.container;
 
+import com.elevenware.redcorn.AllPrimitives;
+import com.elevenware.redcorn.DependentBean;
+import com.elevenware.redcorn.HasInjectableProperty;
 import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.beans.BeanDefinition;
 import com.elevenware.redcorn.beans.DefaultBeanDefinition;
@@ -33,78 +36,54 @@ public class TestSetterInjection {
     @Test
     public void allPrimitivesWork() {
 
-//        ExtendedBeanDefinition definition = new DefaultBeanDefinition(AllPrimitives.class)
-//                .addProperty("theBoolean", true)
-//                .addProperty("theShort", (short) 9)
-//                .addProperty("theInt", 39)
-//                .addProperty("theLong", 66L)
-//                .addProperty("theDouble", 38.3873d)
-//                .addProperty("theFloat", 273.39f)
-//                .addProperty("theChar", 'x')
-//                .addProperty("theString", "Hello");
-//
-//        definition.instantiate();
-//
-//        AllPrimitives all = (AllPrimitives) definition.getPayload();
-//        assertEquals(true, all.isTheBoolean());
-//        assertEquals((short) 9, all.getTheShort());
-//        assertEquals(39, all.getTheInt());
-//        assertEquals(66L, all.getTheLong());
-//        assertEquals(38.3873d, all.getTheDouble(), 4);
-//        assertEquals(273.39f, all.getTheFloat(), 2);
-//        assertEquals('x', all.getTheChar());
-//        assertEquals("Hello", all.getTheString());
+        ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
+
+        BeanDefinition definition = new DefaultBeanDefinition(AllPrimitives.class)
+                .addProperty("theBoolean", true)
+                .addProperty("theShort", (short) 9)
+                .addProperty("theInt", 39)
+                .addProperty("theLong", 66L)
+                .addProperty("theDouble", 38.3873d)
+                .addProperty("theFloat", 273.39f)
+                .addProperty("theChar", 'x')
+                .addProperty("theString", "Hello");
+        definition.setResolutionContext(context);
+
+        definition.prepare();
+
+        definition.instantiate();
+
+        AllPrimitives all = (AllPrimitives) definition.getPayload();
+        assertEquals(true, all.isTheBoolean());
+        assertEquals((short) 9, all.getTheShort());
+        assertEquals(39, all.getTheInt());
+        assertEquals(66L, all.getTheLong());
+        assertEquals(38.3873d, all.getTheDouble(), 4);
+        assertEquals(273.39f, all.getTheFloat(), 2);
+        assertEquals('x', all.getTheChar());
+        assertEquals("Hello", all.getTheString());
 
     }
 
     @Test
-    public void canHydrateWithNoPropertiesAtAll() {
+    public void resolvesReferenceProperties() {
 
-//        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+        ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
+        when(context.resolve("other.bean")).thenReturn(new SimpleBean());
 
-//        assertTrue(definition.canHydrate());
+        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
+        definition.referenceProperty("simpleBean", "other.bean");
 
-    }
+        definition.setResolutionContext(context);
+        definition.prepare();
 
-    @Test
-    public void canHydrateIfPropertiesSatisfied() {
+        definition.instantiate();
 
-//        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+        HasInjectableProperty bean = (HasInjectableProperty) definition.getPayload();
 
-//        assertTrue(definition.canHydrate());
+        assertNotNull(bean);
+        assertNotNull(bean.getSimpleBean());
 
-    }
-
-    @Test
-    public void canNotHydrateIfUnresolvedReferenceProperties() {
-
-//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
-
-//        assertFalse(definition.canHydrate());
-
-    }
-
-    @Test
-    public void hydratesOnceReferencesResolved() {
-
-//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
-
-//        assertFalse(definition.canHydrate());
-//
-//        definition.resolve("other", new SimpleBean());
-//
-//        assertTrue(definition.canHydrate());
-
-    }
-
-//    @Test( expected = RuntimeException.class)
-    public void resolvingNonExistentPropertyFails() {
-
-//        BeanDefinition definition = new DefaultBeanDefinition(HasInjectableProperty.class);
-
-//        assertFalse(definition.canHydrate());
-//
-//        definition.resolve("foo", new SimpleBean());
 
     }
 

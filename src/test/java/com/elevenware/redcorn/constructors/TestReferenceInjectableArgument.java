@@ -17,7 +17,7 @@ public class TestReferenceInjectableArgument {
         when(context.resolve("findableref")).thenReturn(new SimpleBean());
 
         ReferenceInjectableArgument argument = new ReferenceInjectableArgument("findableref", SimpleBean.class);
-        argument.setContext(context);
+        argument.setResolutionContext(context);
 
         argument.inflate();
 
@@ -31,7 +31,7 @@ public class TestReferenceInjectableArgument {
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
 
         ReferenceInjectableArgument argument = new ReferenceInjectableArgument("unfindableref", SimpleBean.class);
-        argument.setContext(context);
+        argument.setResolutionContext(context);
 
         argument.inflate();
 

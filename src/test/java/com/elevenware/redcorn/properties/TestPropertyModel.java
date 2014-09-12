@@ -19,8 +19,13 @@ public class TestPropertyModel {
     @Test
     public void providesProperty() {
 
+        String name = "some name";
         PropertyModel model = new PropertyModel(SimpleBean.class);
+        PropertyModel.PropertyDefinition property = model.getProperty("name");
+        SimpleBean bean = new SimpleBean();
+        property.setProperty(bean, name);
 
+        assertEquals(name, bean.getName());
 
     }
 

@@ -2,7 +2,7 @@ package com.elevenware.redcorn.model;
 
 import com.elevenware.redcorn.constructors.UnresolvableReferenceException;
 
-public class ReferenceInjectableArgument implements InjectableArgument {
+public class ReferenceInjectableArgument implements InjectableArgument, ReferenceResolver {
     private Class<?> type;
     private final String ref;
     private ReferenceResolutionContext context;
@@ -17,9 +17,9 @@ public class ReferenceInjectableArgument implements InjectableArgument {
         this.ref = reference;
     }
 
-    public ReferenceInjectableArgument setContext(ReferenceResolutionContext context) {
+    @Override
+    public void setResolutionContext(ReferenceResolutionContext context) {
         this.context = context;
-        return this;
     }
 
     @Override

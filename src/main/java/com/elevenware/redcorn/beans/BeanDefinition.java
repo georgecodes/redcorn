@@ -66,6 +66,8 @@ public interface BeanDefinition extends ReferenceResolver {
      */
     BeanDefinition addConstructorRef(String other);
 
+    BeanDefinition referenceProperty(String propertyName, String reference);
+
     /**
      * Adds a constructor argument that explicitly references another definition, which will be
      * resolved later by containers. In the case of anonymous definitions, the fqn of the class
@@ -80,4 +82,5 @@ public interface BeanDefinition extends ReferenceResolver {
     boolean isSatisfied();
 
     BeanDefinition addProperty(String name, Object property);
+
 }

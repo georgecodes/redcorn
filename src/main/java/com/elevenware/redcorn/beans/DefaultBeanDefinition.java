@@ -3,7 +3,6 @@ package com.elevenware.redcorn.beans;
 import com.elevenware.redcorn.model.*;
 import com.elevenware.redcorn.properties.PropertyInjectionModel;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 
@@ -48,8 +47,22 @@ public class DefaultBeanDefinition implements BeanDefinition {
     }
 
     private void setProperties(Object object) {
-        for(Map.Entry<String, InjectableArgument> property: propertyArguments) {
-//            PropertyDescriptor descriptor = new PropertyDescriptor()
+        for(Map.Entry<String, InjectableArgument> configuredProperty: propertyArguments) {
+            PropertyModel.PropertyDefinition property = propertyModel.getProperty(configuredProperty.getKey());
+            if(property == null) {
+                throw new RuntimeException(type.getCanonicalName() +
+                        " doesn't have a writable property " + configuredProperty.getKey());
+            }
+            InjectableArgument argument = configuredProperty.getValue();
+            wireInContext(argument);
+            argument.inflate();
+            property.setProperty(object, argument.getPayload());
+        }
+    }
+
+    private void wireInContext(InjectableArgument argument) {
+        if(ReferenceResolver.class.isAssignableFrom(argument.getClass())) {
+            ((ReferenceResolver) argument).setResolutionContext(this.resolutionContext);
         }
     }
 
@@ -128,7 +141,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         for(InjectableArgument argument: constructorArguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
                 ReferenceInjectableArgument arg = (ReferenceInjectableArgument) argument;
-                arg.setContext(resolutionContext);
+                arg.setResolutionContext(resolutionContext);
                 if(!arg.canResolve()) {
                     allReferenceCanResolve = false;
                 }
@@ -164,6 +177,12 @@ public class DefaultBeanDefinition implements BeanDefinition {
     @Override
     public BeanDefinition addProperty(String name, Object property) {
         propertyArguments.addProperty(name, new ConcreteInjectableArgument(property));
+        return this;
+    }
+
+    @Override
+    public BeanDefinition referenceProperty(String propertyName, String reference) {
+        propertyArguments.addProperty(propertyName, new ReferenceInjectableArgument(reference));
         return this;
     }
 

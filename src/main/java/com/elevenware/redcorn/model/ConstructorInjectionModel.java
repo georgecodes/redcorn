@@ -26,7 +26,7 @@ public class ConstructorInjectionModel implements ReferenceResolver, Iterable<In
 
     public void addConstructorArg(InjectableArgument injectableArgument) {
         if(ReferenceInjectableArgument.class.isAssignableFrom(injectableArgument.getClass())) {
-            ((ReferenceInjectableArgument) injectableArgument).setContext(context);
+            ((ReferenceInjectableArgument) injectableArgument).setResolutionContext(context);
         }
         arguments.add(injectableArgument);
     }
@@ -47,7 +47,7 @@ public class ConstructorInjectionModel implements ReferenceResolver, Iterable<In
         List<Object> inflatedArgs = new ArrayList<>();
         for(InjectableArgument arg: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(arg.getClass())) {
-                ((ReferenceInjectableArgument) arg).setContext(context);
+                ((ReferenceInjectableArgument) arg).setResolutionContext(context);
             }
             arg.inflate();
             inflatedArgs.add(arg.getPayload());
@@ -105,7 +105,7 @@ public class ConstructorInjectionModel implements ReferenceResolver, Iterable<In
     public boolean canResolve() {
         for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
-                ((ReferenceInjectableArgument) argument).setContext(context);
+                ((ReferenceInjectableArgument) argument).setResolutionContext(context);
                 if(!argument.canResolve()) {
                     return false;
                 }
@@ -118,7 +118,7 @@ public class ConstructorInjectionModel implements ReferenceResolver, Iterable<In
         List<Class<?>> types = new ArrayList<>();
         for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
-                ((ReferenceInjectableArgument) argument).setContext(context);
+                ((ReferenceInjectableArgument) argument).setResolutionContext(context);
             }
             types.add(argument.getType());
         }
@@ -128,7 +128,7 @@ public class ConstructorInjectionModel implements ReferenceResolver, Iterable<In
     private void rewireResolutionContext(ReferenceResolutionContext context) {
         for(InjectableArgument argument: arguments) {
             if(ReferenceInjectableArgument.class.isAssignableFrom(argument.getClass())) {
-                ((ReferenceInjectableArgument) argument).setContext(context);
+                ((ReferenceInjectableArgument) argument).setResolutionContext(context);
             }
         }
     }
