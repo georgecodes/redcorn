@@ -1,7 +1,6 @@
 package com.elevenware.redcorn.container;
 
 import com.elevenware.redcorn.beans.BeanDefinition;
-import com.elevenware.redcorn.beans.ResolvableBeanDefinition;
 import com.elevenware.redcorn.lifecycle.Lifecycle;
 
 public interface RedcornContainer extends Lifecycle{

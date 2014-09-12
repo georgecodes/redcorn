@@ -1,7 +1,7 @@
 package com.elevenware.redcorn.container;
 
 import com.elevenware.redcorn.beans.BeanDefinition;
-import com.elevenware.redcorn.beans.ResolvableBeanDefinition;
+import com.elevenware.redcorn.beans.DefaultBeanDefinition;
 import com.elevenware.redcorn.beans.ResolvableDependencyInstantiationOrdering;
 import com.elevenware.redcorn.lifecycle.Lifecycle;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
@@ -13,9 +13,9 @@ import java.util.Map;
 
 public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
-    private Map<String, ResolvableBeanDefinition> definitions;
-    private Map<String, ResolvableBeanDefinition> context;
-    private Map<Class<?>, ResolvableBeanDefinition> classContext;
+    private Map<String, DefaultBeanDefinition> definitions;
+    private Map<String, DefaultBeanDefinition> context;
+    private Map<Class<?>, DefaultBeanDefinition> classContext;
 
     public ConstructorInjectionRedcornContainer() {
         definitions = new HashMap<>();
@@ -27,7 +27,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
     @Override
     public BeanDefinition register(Class<?> clazz) {
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(clazz);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(clazz);
         definitions.put(definition.getName(), definition);
         return definition;
     }
@@ -35,7 +35,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     @Override
     public <T> T get(Class<T> clazz) {
         assertStarted();
-        for(Map.Entry<Class<?>, ResolvableBeanDefinition> entry: classContext.entrySet()) {
+        for(Map.Entry<Class<?>, DefaultBeanDefinition> entry: classContext.entrySet()) {
             if(clazz.isAssignableFrom(entry.getKey())) {
                 return (T) entry.getValue().getPayload();
             }
@@ -45,12 +45,12 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
     @Override
     public void start() {
-        List<ResolvableBeanDefinition> beans = new ArrayList<>(definitions.values());
+        List<DefaultBeanDefinition> beans = new ArrayList<>(definitions.values());
 
         ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
-        List<ResolvableBeanDefinition> sorted = ordering.sort();
+        List<DefaultBeanDefinition> sorted = ordering.sort();
         ReferenceResolutionContext resolutionContext = new ContainerResolutionContext(context, classContext);
-        for(ResolvableBeanDefinition bean: sorted) {
+        for(DefaultBeanDefinition bean: sorted) {
             bean.setResolutionContext(resolutionContext);
             bean.prepare();
             bean.instantiate();
@@ -72,7 +72,7 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     @Override
     public <T> T get(String name) {
         assertStarted();
-        ResolvableBeanDefinition definition = context.get(name);
+        DefaultBeanDefinition definition = context.get(name);
         if(definition != null) {
             return (T) definition.getPayload();
         }
@@ -80,8 +80,8 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     }
 
     @Override
-    public ResolvableBeanDefinition register(String name, Class<?> type) {
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(type, name);
+    public DefaultBeanDefinition register(String name, Class<?> type) {
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(type, name);
         definitions.put(definition.getName(), definition);
         return definition;
     }
@@ -116,11 +116,11 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     }
 
     private static class ContainerResolutionContext implements ReferenceResolutionContext {
-        private final Map<String, ResolvableBeanDefinition> context;
-        private final Map<Class<?>, ResolvableBeanDefinition> classContext;
+        private final Map<String, DefaultBeanDefinition> context;
+        private final Map<Class<?>, DefaultBeanDefinition> classContext;
 
-        public ContainerResolutionContext(Map<String, ResolvableBeanDefinition> context,
-                                          Map<Class<?>, ResolvableBeanDefinition> classContext) {
+        public ContainerResolutionContext(Map<String, DefaultBeanDefinition> context,
+                                          Map<Class<?>, DefaultBeanDefinition> classContext) {
             this.context = context;
             this.classContext = classContext;
         }
@@ -147,8 +147,8 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
 
         @Override
         public Object resolveType(Class<?> clazz) {
-            List<ResolvableBeanDefinition> candidates = new ArrayList<>();
-            for(Map.Entry<Class<?>, ResolvableBeanDefinition> entry: classContext.entrySet()) {
+            List<DefaultBeanDefinition> candidates = new ArrayList<>();
+            for(Map.Entry<Class<?>, DefaultBeanDefinition> entry: classContext.entrySet()) {
                 if(clazz.isAssignableFrom(entry.getKey())) {
                     candidates.add(entry.getValue());
                 }

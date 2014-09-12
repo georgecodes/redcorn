@@ -5,17 +5,17 @@ import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import java.util.*;
 
 public class ResolvableDependencyInstantiationOrdering {
-    private final List<ResolvableBeanDefinition> beans;
+    private final List<DefaultBeanDefinition> beans;
     private final SatisfactionChecker eventuallySatisfiable;
 
-    public ResolvableDependencyInstantiationOrdering(List<ResolvableBeanDefinition> beans) {
+    public ResolvableDependencyInstantiationOrdering(List<DefaultBeanDefinition> beans) {
         this.beans = beans;
         this.eventuallySatisfiable = new SatisfactionChecker(beans);
     }
 
-    public List<ResolvableBeanDefinition> sort() {
+    public List<DefaultBeanDefinition> sort() {
         List<Class<?>> allTypes = getTypesFrom(beans);
-        List<ResolvableBeanDefinition> sortedBeans = new ArrayList<>();
+        List<DefaultBeanDefinition> sortedBeans = new ArrayList<>();
         assertAllSatisfiable(beans, allTypes);
         int i = 0;
 
@@ -26,7 +26,7 @@ public class ResolvableDependencyInstantiationOrdering {
             if( i >= beans.size() ) {
                 i = 0;
             }
-            ResolvableBeanDefinition bean = beans.get(i);
+            DefaultBeanDefinition bean = beans.get(i);
 
             if(bean.canInstantiate() && bean.isSatisfied()) {
 //            if(bean.canInstantiate() && bean.isSatisfiedBy(getTypesFrom(sortedBeans))) {
@@ -38,8 +38,8 @@ public class ResolvableDependencyInstantiationOrdering {
         return sortedBeans;
     }
 
-    private void assertAllSatisfiable(List<ResolvableBeanDefinition> beans, List<Class<?>> allTypes) {
-        for(ResolvableBeanDefinition bean: beans) {
+    private void assertAllSatisfiable(List<DefaultBeanDefinition> beans, List<Class<?>> allTypes) {
+        for(DefaultBeanDefinition bean: beans) {
             bean.setResolutionContext(eventuallySatisfiable);
             bean.prepare();
             if(!bean.isSatisfied()) {
@@ -48,9 +48,9 @@ public class ResolvableDependencyInstantiationOrdering {
         }
     }
 
-    private List<Class<?>> getTypesFrom(List<ResolvableBeanDefinition> beans) {
+    private List<Class<?>> getTypesFrom(List<DefaultBeanDefinition> beans) {
         List<Class<?>> types = new ArrayList<>();
-        for(ResolvableBeanDefinition bean: beans) {
+        for(DefaultBeanDefinition bean: beans) {
             types.add(bean.getType());
         }
         return types;
@@ -59,18 +59,18 @@ public class ResolvableDependencyInstantiationOrdering {
     private static class SatisfactionChecker implements ReferenceResolutionContext {
 
         private List<Class<?>> types;
-        private Map<String, ResolvableBeanDefinition> nameToBean;
-        private Map<Class, ResolvableBeanDefinition> classToBean;
+        private Map<String, DefaultBeanDefinition> nameToBean;
+        private Map<Class, DefaultBeanDefinition> classToBean;
 
-        private SatisfactionChecker(List<ResolvableBeanDefinition> beans) {
+        private SatisfactionChecker(List<DefaultBeanDefinition> beans) {
            initialise(beans);
         }
 
-        void initialise(List<ResolvableBeanDefinition> beans) {
+        void initialise(List<DefaultBeanDefinition> beans) {
             this.types = new ArrayList<>();
             this.nameToBean = new HashMap<>();
             this.classToBean = new HashMap<>();
-            for(ResolvableBeanDefinition bean: beans) {
+            for(DefaultBeanDefinition bean: beans) {
                 types.add(bean.getType());
                 nameToBean.put(bean.getName(), bean);
                 classToBean.put(bean.getType(), bean);
@@ -89,7 +89,7 @@ public class ResolvableDependencyInstantiationOrdering {
 
         @Override
         public Class<?> lookupType(String ref) {
-            ResolvableBeanDefinition bean = nameToBean.get(ref);
+            DefaultBeanDefinition bean = nameToBean.get(ref);
             if(bean != null) {
                 return bean.getType();
             }
@@ -103,8 +103,8 @@ public class ResolvableDependencyInstantiationOrdering {
 
         @Override
         public Object resolveType(Class<?> clazz) {
-            List<ResolvableBeanDefinition> candidates = new ArrayList<>();
-            for(Map.Entry<Class, ResolvableBeanDefinition> entry: classToBean.entrySet()) {
+            List<DefaultBeanDefinition> candidates = new ArrayList<>();
+            for(Map.Entry<Class, DefaultBeanDefinition> entry: classToBean.entrySet()) {
                 if(clazz.isAssignableFrom(entry.getKey())) {
                     candidates.add(entry.getValue());
                 }

@@ -10,12 +10,10 @@ import java.lang.reflect.InvocationTargetException;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class TestInjectableArgumentModel {
+public class TestConstructorInjectionModel {
 
     @Test
     public void constructorArguments() throws IllegalAccessException, InvocationTargetException, InstantiationException {
-
-        //TODO use InjectableArgumentModel inside DefaultBeanDefinition to keep better track of things
 
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
         when(context.resolve("server.name")).thenReturn("The name");

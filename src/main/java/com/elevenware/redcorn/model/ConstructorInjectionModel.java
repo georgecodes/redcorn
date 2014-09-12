@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class ConstructorInjectionModel implements Iterable<InjectableArgument> {
+public class ConstructorInjectionModel implements ReferenceResolver, Iterable<InjectableArgument> {
     private ReferenceResolutionContext context;
     private List<InjectableArgument> arguments;
     private Object[] inflatedArguments;
@@ -19,7 +19,7 @@ public class ConstructorInjectionModel implements Iterable<InjectableArgument> {
         this.arguments = new ArrayList<>();
     }
 
-    public void setContext(ReferenceResolutionContext ctx) {
+    public void setResolutionContext(ReferenceResolutionContext ctx) {
         this.context = ctx;
         rewireResolutionContext(ctx);
     }

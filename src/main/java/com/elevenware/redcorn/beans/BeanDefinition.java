@@ -1,8 +1,9 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
+import com.elevenware.redcorn.model.ReferenceResolver;
 
-public interface BeanDefinition {
+public interface BeanDefinition extends ReferenceResolver {
 
     /**
      * Denotes whether or not this bean definition is in a state that it can
@@ -55,11 +56,28 @@ public interface BeanDefinition {
      * @param object - the instance for configuration
      */
     BeanDefinition addConstructorArg(Object object);
+
+    /**
+     * Adds a constructor argument that explicitly references another definition, which will be
+     * resolved later by containers. In the case of anonymous definitions, the fqn of the class
+     * is the name.
+     * @param other
+     * @return
+     */
     BeanDefinition addConstructorRef(String other);
+
+    /**
+     * Adds a constructor argument that explicitly references another definition, which will be
+     * resolved later by containers. In the case of anonymous definitions, the fqn of the class
+     * is the name. A type is also provided, to cover cases where the type cannot be inferred in advance
+     * @param other
+     * @return
+     */
     BeanDefinition addConstructorRef(String other, Class<?> type);
     BeanDefinition addConstructorRef(Class<?> clazz);
     void prepare();
     String getName();
     boolean isSatisfied();
 
+    BeanDefinition addProperty(String name, Object property);
 }

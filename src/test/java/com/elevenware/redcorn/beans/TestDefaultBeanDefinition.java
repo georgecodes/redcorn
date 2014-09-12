@@ -15,14 +15,14 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TestResolvableBeanDefinition {
+public class TestDefaultBeanDefinition {
 
     @Test
     public void simpleBeanNeedsNoResolving() {
 
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(SimpleBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
         definition.setResolutionContext(context);
 
         definition.prepare();
@@ -41,7 +41,7 @@ public class TestResolvableBeanDefinition {
 
         ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(NamedBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(NamedBean.class);
         definition.setResolutionContext(context);
 
         definition.prepare();
@@ -53,7 +53,7 @@ public class TestResolvableBeanDefinition {
     @Test
     public void beanWithConcreteConstructorArgsCanInstantiate() {
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(NamedBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(NamedBean.class);
         definition.addConstructorArg("Hello");
 
         definition.prepare();
@@ -73,7 +73,7 @@ public class TestResolvableBeanDefinition {
     @Test
     public void beanWithNamedReferenceConstructorArgCannotInstantiate() {
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         definition.addConstructorRef("other");
 
         assertFalse(definition.canInstantiate());
@@ -93,7 +93,7 @@ public class TestResolvableBeanDefinition {
         });
         when(context.resolve("other")).thenReturn(new SimpleBean());
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         definition.addConstructorRef("other");
 
         definition.setResolutionContext(context);
@@ -113,7 +113,7 @@ public class TestResolvableBeanDefinition {
     @Test
     public void beanWithReferenceConstructorArgCannotInstantiate() {
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         definition.addConstructorRef(SimpleBean.class);
 
         assertFalse(definition.canInstantiate());
@@ -134,7 +134,7 @@ public class TestResolvableBeanDefinition {
         when(context.resolve(SimpleBean.class.getCanonicalName())).thenReturn(new SimpleBean());
 
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         definition.addConstructorRef(SimpleBean.class);
 
         definition.setResolutionContext(context);
@@ -161,7 +161,7 @@ public class TestResolvableBeanDefinition {
         when(context.getContainedTypes()).thenReturn(types);
         when(context.resolve(SimpleBean.class.getCanonicalName())).thenReturn(new SimpleBean());
 
-        ResolvableBeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        DefaultBeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
 
         definition.setResolutionContext(context);
 
@@ -174,7 +174,7 @@ public class TestResolvableBeanDefinition {
     @Test
     public void definitionsAssumeClassNameAsNameByDefault() {
 
-        BeanDefinition definition = new ResolvableBeanDefinition(DependentBean.class);
+        BeanDefinition definition = new DefaultBeanDefinition(DependentBean.class);
         assertEquals(DependentBean.class.getCanonicalName(), definition.getName());
 
     }

@@ -108,7 +108,7 @@ public class TestConstructorModel {
         when(context.lookupType("simple.bean")).thenReturn(type);
         ConstructorInjectionModel injectionModel = new ConstructorInjectionModel();
         ReferenceInjectableArgument arg = new ReferenceInjectableArgument("simple.bean");
-        injectionModel.setContext(context);
+        injectionModel.setResolutionContext(context);
 
         injectionModel.addConstructorArg(arg);
 

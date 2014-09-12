@@ -18,15 +18,15 @@ public class TestResolvableDependencyOrdering {
     @Test
     public void ordering() {
 
-        List<ResolvableBeanDefinition> beans = new ArrayList<>();
+        List<DefaultBeanDefinition> beans = new ArrayList<>();
 
-        beans.add(new ResolvableBeanDefinition(HelloWorldApplication.class));
-        beans.add(new ResolvableBeanDefinition(MessageFactoryImpl.class));
-        beans.add(new ResolvableBeanDefinition(HelloWorldMessageProducerImpl.class));
+        beans.add(new DefaultBeanDefinition(HelloWorldApplication.class));
+        beans.add(new DefaultBeanDefinition(MessageFactoryImpl.class));
+        beans.add(new DefaultBeanDefinition(HelloWorldMessageProducerImpl.class));
 
         ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
-        List<ResolvableBeanDefinition> sortedBeans = ordering.sort();
+        List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
         assertEquals(3, sortedBeans.size());
         assert(sortedBeans.get(0).getType().equals(HelloWorldMessageProducerImpl.class));
@@ -38,13 +38,13 @@ public class TestResolvableDependencyOrdering {
     @Test
     public void orderingWhenNamedConstructorArgs() {
 
-        List<ResolvableBeanDefinition> beans = new ArrayList<>();
+        List<DefaultBeanDefinition> beans = new ArrayList<>();
 
-        ResolvableBeanDefinition base = new ResolvableBeanDefinition(HasNamedBeanArg.class, "hasNamedBean")
+        DefaultBeanDefinition base = new DefaultBeanDefinition(HasNamedBeanArg.class, "hasNamedBean")
                 .addConstructorRef("second");
-        ResolvableBeanDefinition first = new ResolvableBeanDefinition(NamedBean.class, "first")
+        DefaultBeanDefinition first = new DefaultBeanDefinition(NamedBean.class, "first")
                 .addConstructorArg("first bean");
-        ResolvableBeanDefinition second = new ResolvableBeanDefinition(NamedBean.class, "second")
+        DefaultBeanDefinition second = new DefaultBeanDefinition(NamedBean.class, "second")
                 .addConstructorArg("second bean");
 
         beans.add(first);
@@ -53,7 +53,7 @@ public class TestResolvableDependencyOrdering {
 
         ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
-        List<ResolvableBeanDefinition> sortedBeans = ordering.sort();
+        List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
         assertEquals(3, sortedBeans.size());
         assertEquals(sortedBeans.get(2), base);
@@ -63,17 +63,17 @@ public class TestResolvableDependencyOrdering {
     @Test
     public void weirdBugInGribble() {
 
-        List<ResolvableBeanDefinition> beans = new ArrayList<>();
+        List<DefaultBeanDefinition> beans = new ArrayList<>();
 
-        ResolvableBeanDefinition bazHandler = new ResolvableBeanDefinition(BazHandler.class, "bazHandler")
+        DefaultBeanDefinition bazHandler = new DefaultBeanDefinition(BazHandler.class, "bazHandler")
                 .addConstructorRef("config")
                 .addConstructorRef("resolver")
                 .addConstructorRef("appContext");
 
-        ResolvableBeanDefinition appContext = new ResolvableBeanDefinition(ConstructorInjectionRedcornContainer.class, "appContext");
+        DefaultBeanDefinition appContext = new DefaultBeanDefinition(ConstructorInjectionRedcornContainer.class, "appContext");
 
-        ResolvableBeanDefinition bazResolver = new ResolvableBeanDefinition(BazResolver.class, "resolver");
-        ResolvableBeanDefinition parser = new ResolvableBeanDefinition(ManagedBazParser.class, "config")
+        DefaultBeanDefinition bazResolver = new DefaultBeanDefinition(BazResolver.class, "resolver");
+        DefaultBeanDefinition parser = new DefaultBeanDefinition(ManagedBazParser.class, "config")
                 .addConstructorArg("baz");
 
         beans.add(bazHandler);
@@ -83,7 +83,7 @@ public class TestResolvableDependencyOrdering {
 
         ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
-        List<ResolvableBeanDefinition> sortedBeans = ordering.sort();
+        List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
         assertEquals(bazHandler, sortedBeans.get(3));
 

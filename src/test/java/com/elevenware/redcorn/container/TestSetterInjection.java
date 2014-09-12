@@ -1,21 +1,32 @@
 package com.elevenware.redcorn.container;
 
+import com.elevenware.redcorn.SimpleBean;
+import com.elevenware.redcorn.beans.BeanDefinition;
+import com.elevenware.redcorn.beans.DefaultBeanDefinition;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class TestSetterInjection {
 
     @Test
     public void canAddValuePropertiesToDefinitions() {
 
-//        String message = "This was injected";
-//        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
-//        definition.addProperty("name", message);
-//
-//        definition.instantiate();
-//
-//        SimpleBean bean = (SimpleBean) definition.getPayload();
-//
-//        assertEquals(message, bean.getName());
+        ReferenceResolutionContext context = mock(ReferenceResolutionContext.class);
+
+        String message = "This was injected";
+        BeanDefinition definition = new DefaultBeanDefinition(SimpleBean.class);
+        definition.setResolutionContext(context);
+        definition.addProperty("name", message);
+
+        definition.prepare();
+        definition.instantiate();
+
+        SimpleBean bean = (SimpleBean) definition.getPayload();
+
+        assertEquals(message, bean.getName());
 
     }
 

@@ -1,29 +1,36 @@
 package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.model.*;
+import com.elevenware.redcorn.properties.PropertyInjectionModel;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Constructor;
+import java.util.Map;
 
-public class ResolvableBeanDefinition implements BeanDefinition {
+public class DefaultBeanDefinition implements BeanDefinition {
 
 
     private final Class<?> type;
     private final String name;
     private final ConstructorModel constructorModel;
+    private PropertyModel propertyModel;
     private ConstructorInjectionModel constructorArguments;
+    private PropertyInjectionModel propertyArguments;
     private Object payload;
     private ReferenceResolutionContext resolutionContext;
     private InstantiationStrategy instantiationStrategy;
 
-    public ResolvableBeanDefinition(Class<?> type) {
+    public DefaultBeanDefinition(Class<?> type) {
         this(type, type.getCanonicalName());
     }
 
-    public ResolvableBeanDefinition(Class<?> type, String name) {
+    public DefaultBeanDefinition(Class<?> type, String name) {
         this.type = type;
         this.name = name;
         this.constructorModel = new ConstructorModel(type);
+        this.propertyModel = new PropertyModel(type);
         this.constructorArguments = new ConstructorInjectionModel();
+        this.propertyArguments = new PropertyInjectionModel();
     }
 
     @Override
@@ -35,7 +42,15 @@ public class ResolvableBeanDefinition implements BeanDefinition {
 
     @Override
     public void instantiate() {
-        payload =  instantiationStrategy.instantiate();
+        Object object =  instantiationStrategy.instantiate();
+        setProperties(object);
+        this.payload = object;
+    }
+
+    private void setProperties(Object object) {
+        for(Map.Entry<String, InjectableArgument> property: propertyArguments) {
+//            PropertyDescriptor descriptor = new PropertyDescriptor()
+        }
     }
 
     @Override
@@ -51,23 +66,23 @@ public class ResolvableBeanDefinition implements BeanDefinition {
     @Override
     public void setResolutionContext(ReferenceResolutionContext resolutionContext) {
         this.resolutionContext = resolutionContext;
-        constructorArguments.setContext(resolutionContext);
+        constructorArguments.setResolutionContext(resolutionContext);
     }
 
     @Override
-    public ResolvableBeanDefinition addConstructorArg(Object arg) {
+    public DefaultBeanDefinition addConstructorArg(Object arg) {
         constructorArguments.addConstructorArg(new ConcreteInjectableArgument(arg));
         return this;
     }
 
     @Override
-    public ResolvableBeanDefinition addConstructorRef(String other) {
+    public DefaultBeanDefinition addConstructorRef(String other) {
         constructorArguments.addConstructorArg(new ReferenceInjectableArgument(other));
         return this;
     }
 
     @Override
-    public ResolvableBeanDefinition addConstructorRef(Class<?> clazz) {
+    public DefaultBeanDefinition addConstructorRef(Class<?> clazz) {
         constructorArguments.addConstructorArg(new ReferenceInjectableArgument(clazz.getCanonicalName(), clazz));
         return this;
     }
@@ -75,7 +90,7 @@ public class ResolvableBeanDefinition implements BeanDefinition {
     @Override
     public void prepare() {
 
-        constructorArguments.setContext(resolutionContext);
+        constructorArguments.setResolutionContext(resolutionContext);
 
         if(explicitConstructorArgumentsConfigured()) {
             createInstantiationStrategyFrom(constructorArguments);
@@ -146,7 +161,13 @@ public class ResolvableBeanDefinition implements BeanDefinition {
         return instantiationStrategy.isSatisfied();
     }
 
-    public ResolvableBeanDefinition addConstructorRef(String name, Class<?> type) {
+    @Override
+    public BeanDefinition addProperty(String name, Object property) {
+        propertyArguments.addProperty(name, new ConcreteInjectableArgument(property));
+        return this;
+    }
+
+    public DefaultBeanDefinition addConstructorRef(String name, Class<?> type) {
         constructorArguments.addConstructorArg(new ReferenceInjectableArgument(name, type));
         return this;
     }

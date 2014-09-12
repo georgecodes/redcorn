@@ -37,7 +37,7 @@ public class TestConfiguredArgumentsInstantiationStrategy {
         when(context.resolve("the.bean")).thenReturn(new SimpleBean());
 
         ConstructorInjectionModel model = new ConstructorInjectionModel();
-        model.setContext(context);
+        model.setResolutionContext(context);
         model.addConstructorArg(new ReferenceInjectableArgument("the.bean"));
         Constructor constructor = DependentBean.class.getDeclaredConstructor(new Class[] {SimpleBean.class });
         InstantiationStrategy strategy = new ConcreteArgumentsInstantiationStrategy(constructor, model);
