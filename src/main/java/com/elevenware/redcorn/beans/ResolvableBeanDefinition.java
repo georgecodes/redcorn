@@ -147,7 +147,8 @@ public class ResolvableBeanDefinition implements BeanDefinition {
     }
 
     public ResolvableBeanDefinition addConstructorRef(String name, Class<?> type) {
-        return null;
+        constructorArguments.addConstructorArg(new ReferenceInjectableArgument(name, type));
+        return this;
     }
 
 }
