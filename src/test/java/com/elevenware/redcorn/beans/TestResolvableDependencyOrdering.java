@@ -2,6 +2,7 @@ package com.elevenware.redcorn.beans;
 
 import com.elevenware.redcorn.*;
 import com.elevenware.redcorn.container.ConstructorInjectionRedcornContainer;
+import com.elevenware.redcorn.container.ContainerResolutionContext;
 import com.elevenware.redcorn.container.HasNamedBeanArg;
 import com.elevenware.redcorn.hierarchy.HelloWorldApplication;
 import com.elevenware.redcorn.hierarchy.HelloWorldMessageProducerImpl;
@@ -24,7 +25,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(new DefaultBeanDefinition(MessageFactoryImpl.class));
         beans.add(new DefaultBeanDefinition(HelloWorldMessageProducerImpl.class));
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
@@ -51,7 +52,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(base);
         beans.add(second);
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
@@ -81,7 +82,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(parser);
         beans.add(appContext);
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 

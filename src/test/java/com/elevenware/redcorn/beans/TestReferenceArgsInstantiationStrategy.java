@@ -33,7 +33,6 @@ public class TestReferenceArgsInstantiationStrategy {
         assertNotNull(bean);
         assertNotNull(bean.getSimpleBean());
 
-
     }
 
 

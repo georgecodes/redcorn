@@ -16,7 +16,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
     private ConstructorInjectionModel constructorArguments;
     private PropertyInjectionModel propertyArguments;
     private Object payload;
-    private ReferenceResolutionContext resolutionContext;
+    private SwitchableReferenceResolutionContext resolutionContext;
     private InstantiationStrategy instantiationStrategy;
 
     public DefaultBeanDefinition(Class<?> type) {
@@ -30,6 +30,7 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.propertyModel = new PropertyModel(type);
         this.constructorArguments = new ConstructorInjectionModel();
         this.propertyArguments = new PropertyInjectionModel();
+        this.resolutionContext = new SwitchableReferenceResolutionContext();
     }
 
     @Override
@@ -78,8 +79,8 @@ public class DefaultBeanDefinition implements BeanDefinition {
 
     @Override
     public void setResolutionContext(ReferenceResolutionContext resolutionContext) {
-        this.resolutionContext = resolutionContext;
-        constructorArguments.setResolutionContext(resolutionContext);
+        this.resolutionContext.setDelegate(resolutionContext);
+        constructorArguments.setResolutionContext(this.resolutionContext);
     }
 
     @Override

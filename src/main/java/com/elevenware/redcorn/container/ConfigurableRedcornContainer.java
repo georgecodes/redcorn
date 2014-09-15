@@ -1,8 +1,12 @@
 package com.elevenware.redcorn.container;
 
+import com.elevenware.redcorn.beans.DefaultBeanDefinition;
+import com.elevenware.redcorn.model.ReferenceResolutionContext;
+
+import java.util.Map;
 import java.util.Properties;
 
-public class ConfigurableRedcornContainer extends ConstructorInjectionRedcornContainer {
+public class ConfigurableRedcornContainer extends AbstractRedcornContainer {
 
 
     private final Properties properties;
@@ -12,17 +16,10 @@ public class ConfigurableRedcornContainer extends ConstructorInjectionRedcornCon
     }
 
     @Override
-    public void start() {
-//        for(BeanDefinition definition: registeredTypes) {
-//           int position = 0;
-//           List<ConstructorArgument> args = new ArrayList<>();
-//           for(String ref: definition.getConstructorRefs()) {
-//                if(properties.containsKey(ref)) {
-//                    replaceConstructorRefWithValue(definition, ref, properties.get(ref), position++, refs.size());
-//                }
-//            }
-//        }
-        super.start();
+    protected ReferenceResolutionContext createResolutionContext(Map<String, DefaultBeanDefinition> context,
+                                                                 Map<Class<?>, DefaultBeanDefinition> classContext) {
+       return new OverridableReferenceResolutionContext(properties, new ContainerResolutionContext(context, classContext));
+
     }
 
 }
