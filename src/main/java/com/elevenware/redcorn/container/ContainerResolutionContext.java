@@ -1,5 +1,6 @@
 package com.elevenware.redcorn.container;
 
+import com.elevenware.redcorn.beans.BeanDefinition;
 import com.elevenware.redcorn.beans.DefaultBeanDefinition;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 
@@ -8,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public class ContainerResolutionContext implements ReferenceResolutionContext {
-    private final Map<String, DefaultBeanDefinition> context;
-    private final Map<Class<?>, DefaultBeanDefinition> classContext;
+    private final Map<String, BeanDefinition> context;
+    private final Map<Class<?>, BeanDefinition> classContext;
 
-    public ContainerResolutionContext(Map<String, DefaultBeanDefinition> context,
-                                      Map<Class<?>, DefaultBeanDefinition> classContext) {
+    public ContainerResolutionContext(Map<String, BeanDefinition> context,
+                                      Map<Class<?>, BeanDefinition> classContext) {
         this.context = context;
         this.classContext = classContext;
     }
@@ -39,8 +40,8 @@ public class ContainerResolutionContext implements ReferenceResolutionContext {
 
     @Override
     public Object resolveType(Class<?> clazz) {
-        List<DefaultBeanDefinition> candidates = new ArrayList<>();
-        for(Map.Entry<Class<?>, DefaultBeanDefinition> entry: classContext.entrySet()) {
+        List<BeanDefinition> candidates = new ArrayList<>();
+        for(Map.Entry<Class<?>, BeanDefinition> entry: classContext.entrySet()) {
             if(clazz.isAssignableFrom(entry.getKey())) {
                 candidates.add(entry.getValue());
             }

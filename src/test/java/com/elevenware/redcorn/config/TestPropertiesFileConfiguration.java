@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 
 public class TestPropertiesFileConfiguration {
 
-//    @Test
+    @Test
     public void something() {
 
         Properties properties = new Properties();

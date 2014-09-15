@@ -6,18 +6,24 @@ import com.elevenware.redcorn.model.ReferenceResolutionContext;
 import java.util.*;
 
 public class ResolvableDependencyInstantiationOrdering {
-    private final List<DefaultBeanDefinition> beans;
+    private final List<BeanDefinition> beans;
+    private final Properties properties;
 
-    public ResolvableDependencyInstantiationOrdering(List<DefaultBeanDefinition> beans) {
-        this.beans = beans;
+    public ResolvableDependencyInstantiationOrdering(List<BeanDefinition> beans) {
+        this(beans, new Properties());
     }
 
-    public List<DefaultBeanDefinition> sort() {
+    public ResolvableDependencyInstantiationOrdering(List<BeanDefinition> beans, Properties properties) {
+        this.beans = beans;
+        this.properties = properties;
+    }
+
+    public List<BeanDefinition> sort() {
         List<Class<?>> allTypes = getTypesFrom(beans);
-        List<DefaultBeanDefinition> sortedBeans = new ArrayList<>();
+        List<BeanDefinition> sortedBeans = new ArrayList<>();
         assertAllSatisfiable(beans, allTypes);
         int i = 0;
-        SatisfactionChecker resolutionContext = new SatisfactionChecker(sortedBeans);
+        SatisfactionChecker resolutionContext = new SatisfactionChecker(sortedBeans, properties);
 
         while(!beans.isEmpty()) {
             resolutionContext.initialise(sortedBeans);
@@ -26,12 +32,10 @@ public class ResolvableDependencyInstantiationOrdering {
             if( i >= beans.size() ) {
                 i = 0;
             }
-            DefaultBeanDefinition bean = beans.get(i);
+            BeanDefinition bean = beans.get(i);
             bean.setResolutionContext(resolutionContext);
-//            bean.prepare();
 
             if(bean.canInstantiate() && bean.isSatisfied()) {
-//            if(bean.canInstantiate() && bean.isSatisfiedBy(getTypesFrom(sortedBeans))) {
                 sortedBeans.add(bean);
                 beans.remove(i);
             }
@@ -40,9 +44,9 @@ public class ResolvableDependencyInstantiationOrdering {
         return sortedBeans;
     }
 
-    private void assertAllSatisfiable(List<DefaultBeanDefinition> beans, List<Class<?>> allTypes) {
-        ReferenceResolutionContext resolutionContext = new SatisfactionChecker(beans);
-        for(DefaultBeanDefinition bean: beans) {
+    private void assertAllSatisfiable(List<BeanDefinition> beans, List<Class<?>> allTypes) {
+        ReferenceResolutionContext resolutionContext = new SatisfactionChecker(beans, properties);
+        for(BeanDefinition bean: beans) {
             bean.setResolutionContext(resolutionContext);
             bean.prepare();
             if(!bean.isSatisfied()) {
@@ -51,9 +55,9 @@ public class ResolvableDependencyInstantiationOrdering {
         }
     }
 
-    private List<Class<?>> getTypesFrom(List<DefaultBeanDefinition> beans) {
+    private List<Class<?>> getTypesFrom(List<BeanDefinition> beans) {
         List<Class<?>> types = new ArrayList<>();
-        for(DefaultBeanDefinition bean: beans) {
+        for(BeanDefinition bean: beans) {
             types.add(bean.getType());
         }
         return types;

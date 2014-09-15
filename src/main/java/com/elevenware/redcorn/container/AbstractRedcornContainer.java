@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractRedcornContainer implements RedcornContainer {
-    private Map<String, DefaultBeanDefinition> definitions;
-    private Map<String, DefaultBeanDefinition> context;
-    private Map<Class<?>, DefaultBeanDefinition> classContext;
+    private Map<String, BeanDefinition> definitions;
+    private Map<String, BeanDefinition> context;
+    private Map<Class<?>, BeanDefinition> classContext;
 
     public AbstractRedcornContainer() {
         definitions = new HashMap<>();
@@ -34,7 +34,7 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
     @Override
     public <T> T get(Class<T> clazz) {
         assertStarted();
-        for(Map.Entry<Class<?>, DefaultBeanDefinition> entry: classContext.entrySet()) {
+        for(Map.Entry<Class<?>, BeanDefinition> entry: classContext.entrySet()) {
             if(clazz.isAssignableFrom(entry.getKey())) {
                 return (T) entry.getValue().getPayload();
             }
@@ -44,12 +44,11 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
 
     @Override
     public void start() {
-        List<DefaultBeanDefinition> beans = new ArrayList<>(definitions.values());
+        List<BeanDefinition> beans = new ArrayList<>(definitions.values());
 
         ReferenceResolutionContext resolutionContext = createResolutionContext(context, classContext);
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
-        List<DefaultBeanDefinition> sorted = ordering.sort();
-        for(DefaultBeanDefinition bean: sorted) {
+        List<BeanDefinition> sorted = sort(beans);
+        for(BeanDefinition bean: sorted) {
             bean.setResolutionContext(resolutionContext);
             bean.prepare();
             bean.instantiate();
@@ -63,7 +62,9 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
         this.started = true;
     }
 
-    protected abstract ReferenceResolutionContext createResolutionContext(Map<String, DefaultBeanDefinition> context, Map<Class<?>, DefaultBeanDefinition> classContext);
+    protected abstract List<BeanDefinition> sort(List<BeanDefinition> beans);
+
+    protected abstract ReferenceResolutionContext createResolutionContext(Map<String, BeanDefinition> context, Map<Class<?>, BeanDefinition> classContext);
 
     @Override
     public void stop() {
@@ -73,7 +74,7 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
     @Override
     public <T> T get(String name) {
         assertStarted();
-        DefaultBeanDefinition definition = context.get(name);
+        BeanDefinition definition = context.get(name);
         if(definition != null) {
             return (T) definition.getPayload();
         }
