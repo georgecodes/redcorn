@@ -25,7 +25,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(new DefaultBeanDefinition(MessageFactoryImpl.class));
         beans.add(new DefaultBeanDefinition(HelloWorldMessageProducerImpl.class));
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
@@ -52,7 +52,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(base);
         beans.add(second);
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 
@@ -82,7 +82,7 @@ public class TestResolvableDependencyOrdering {
         beans.add(parser);
         beans.add(appContext);
 
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, new SatisfactionChecker(beans));
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
 
         List<DefaultBeanDefinition> sortedBeans = ordering.sort();
 

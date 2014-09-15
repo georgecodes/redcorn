@@ -7,11 +7,9 @@ import java.util.*;
 
 public class ResolvableDependencyInstantiationOrdering {
     private final List<DefaultBeanDefinition> beans;
-    private final ReferenceResolutionContext eventuallySatisfiable;
 
-    public ResolvableDependencyInstantiationOrdering(List<DefaultBeanDefinition> beans, ReferenceResolutionContext resolutionContext) {
+    public ResolvableDependencyInstantiationOrdering(List<DefaultBeanDefinition> beans) {
         this.beans = beans;
-        this.eventuallySatisfiable = resolutionContext;
     }
 
     public List<DefaultBeanDefinition> sort() {

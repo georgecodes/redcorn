@@ -47,7 +47,7 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
         List<DefaultBeanDefinition> beans = new ArrayList<>(definitions.values());
 
         ReferenceResolutionContext resolutionContext = createResolutionContext(context, classContext);
-        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans, resolutionContext);
+        ResolvableDependencyInstantiationOrdering ordering = new ResolvableDependencyInstantiationOrdering(beans);
         List<DefaultBeanDefinition> sorted = ordering.sort();
         for(DefaultBeanDefinition bean: sorted) {
             bean.setResolutionContext(resolutionContext);
