@@ -17,7 +17,10 @@ public class OverridableReferenceResolutionContext implements ReferenceResolutio
 
     @Override
     public Object resolve(String ref) {
-        Object object = properties.get(ref);
+        Object object = System.getProperties().get(ref);
+        if(object == null) {
+            object = properties.get(ref);
+        }
         if(object == null) {
             object = delegate.resolve(ref);
         }
@@ -26,6 +29,9 @@ public class OverridableReferenceResolutionContext implements ReferenceResolutio
 
     @Override
     public boolean canResolve(String ref) {
+        if(System.getProperties().containsKey(ref)) {
+            return true;
+        }
         if(properties.containsKey(ref)) {
             return true;
         }

@@ -33,16 +33,25 @@ public class SatisfactionChecker implements ReferenceResolutionContext {
 
     @Override
     public Object resolve(String ref) {
-        return properties.containsKey(ref) ? properties.get(ref) : nameToBean.get(ref);
+        Object object = System.getProperties().get(ref);
+        if(object == null) {
+            object = properties.get(ref);
+        }
+        if(object == null) {
+            object = nameToBean.get(ref);
+        }
+        return object;
     }
 
     @Override
     public boolean canResolve(String ref) {
-        boolean canResolve = properties.containsKey(ref);
-        if(!canResolve) {
-            return nameToBean.containsKey(ref);
+        if(System.getProperties().containsKey(ref)) {
+            return true;
         }
-        return true;
+        if(properties.containsKey(ref)) {
+            return true;
+        }
+        return nameToBean.containsKey(ref);
     }
 
     @Override

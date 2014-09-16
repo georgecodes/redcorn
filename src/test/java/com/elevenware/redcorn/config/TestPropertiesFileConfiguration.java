@@ -15,20 +15,6 @@ import static org.junit.Assert.assertEquals;
 public class TestPropertiesFileConfiguration {
 
     @Test
-    public void reflection() throws Exception {
-
-        Constructor<SimpleServer> theConstructor = SimpleServer.class.getDeclaredConstructor(new Class[] { Integer.class});
-
-        Object[] args = { 1 };
-
-        SimpleServer bean = theConstructor.newInstance(args);
-
-        assertEquals(1, bean.getPort());
-    }
-
-
-
-    @Test
     public void simpleCheck() {
 
         Properties properties = new Properties();
@@ -46,7 +32,7 @@ public class TestPropertiesFileConfiguration {
     }
 
     @Test
-    public void primitivesAreCast() {
+    public void primitivesAreHandled() {
 
         Properties properties = new Properties();
         properties.setProperty("theBoolean", "true");
@@ -60,13 +46,13 @@ public class TestPropertiesFileConfiguration {
 
         RedcornContainer container = new ConfigurableRedcornContainer(properties);
         container.register(AllPrimitives.class)
-                .addConstructorRef("theBoolean", boolean.class)
-                .addConstructorRef("theShort", short.class)
-                .addConstructorRef("theInt", int.class)
-                .addConstructorRef("theLong", long.class)
-                .addConstructorRef("theDouble", double.class)
-                .addConstructorRef("theFloat", float.class)
-                .addConstructorRef("theChar", char.class)
+                .addConstructorRef("theBoolean", Boolean.TYPE)
+                .addConstructorRef("theShort", Short.TYPE)
+                .addConstructorRef("theInt", Integer.TYPE)
+                .addConstructorRef("theLong", Long.TYPE)
+                .addConstructorRef("theDouble", Double.TYPE)
+                .addConstructorRef("theFloat", Float.TYPE)
+                .addConstructorRef("theChar", Character.TYPE)
                 .addConstructorRef("theString", String.class);
 
         container.start();
@@ -81,6 +67,63 @@ public class TestPropertiesFileConfiguration {
         assertEquals(273.39f, all.getTheFloat(), 2);
         assertEquals('x', all.getTheChar());
         assertEquals("Hello", all.getTheString());
+    }
+
+    @Test
+    public void primitivesAreCast() {
+
+        Properties properties = new Properties();
+        properties.setProperty("theBoolean", "true");
+        properties.setProperty("theShort", "9");
+        properties.setProperty("theInt", "39");
+        properties.setProperty("theLong", "66");
+        properties.setProperty("theDouble", "38.3873");
+        properties.setProperty("theFloat", "273.39");
+        properties.setProperty("theChar", "x");
+        properties.setProperty("theString", "Hello");
+
+        RedcornContainer container = new ConfigurableRedcornContainer(properties);
+        container.register(AllPrimitives.class)
+                .addConstructorRef("theBoolean", Boolean.class)
+                .addConstructorRef("theShort", Short.class)
+                .addConstructorRef("theInt", Integer.class)
+                .addConstructorRef("theLong", Long.class)
+                .addConstructorRef("theDouble", Double.class)
+                .addConstructorRef("theFloat", Float.class)
+                .addConstructorRef("theChar", Character.class)
+                .addConstructorRef("theString", String.class);
+
+        container.start();
+
+        AllPrimitives all = container.get(AllPrimitives.class);
+
+        assertEquals(true, all.isTheBoolean());
+        assertEquals((short) 9, all.getTheShort());
+        assertEquals(39, all.getTheInt());
+        assertEquals(66L, all.getTheLong());
+        assertEquals(38.3873d, all.getTheDouble(), 4);
+        assertEquals(273.39f, all.getTheFloat(), 2);
+        assertEquals('x', all.getTheChar());
+        assertEquals("Hello", all.getTheString());
+    }
+
+    @Test
+    public void systemPropertiesOverrideProperties() {
+
+        Properties properties = new Properties();
+        properties.setProperty("server.port", "8009");
+
+        System.setProperty("server.port", "8010");
+
+        RedcornContainer container = new ConfigurableRedcornContainer(properties);
+        container.register(SimpleServer.class)
+                .addConstructorRef("server.port", int.class);
+
+        container.start();
+
+        SimpleServer server = container.get(SimpleServer.class);
+        assertEquals(8010, server.getPort());
+
     }
 
 }
