@@ -18,6 +18,7 @@ public class TestPropertiesFileConfiguration {
     public void simpleCheck() {
 
         Properties properties = new Properties();
+
         properties.setProperty("server.port", "8009");
 
         RedcornContainer container = new ConfigurableRedcornContainer(properties);
@@ -28,6 +29,20 @@ public class TestPropertiesFileConfiguration {
 
         SimpleServer server = container.get(SimpleServer.class);
         assertEquals(8009, server.getPort());
+
+    }
+
+    @Test
+    public void loadsFromReader() {
+
+        RedcornContainer container = new ConfigurableRedcornContainer("src/test/resources/simpleserver.properties");
+        container.register(SimpleServer.class)
+                .addConstructorRef("server.port", int.class);
+
+        container.start();
+
+        SimpleServer server = container.get(SimpleServer.class);
+        assertEquals(9100, server.getPort());
 
     }
 

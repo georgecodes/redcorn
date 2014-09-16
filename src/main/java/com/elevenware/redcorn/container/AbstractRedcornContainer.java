@@ -115,7 +115,7 @@ public abstract class AbstractRedcornContainer implements RedcornContainer {
 
     private void assertStarted() {
         if(!started) {
-            throw new ContainerNotStartedException();
+            throw new ContainerNotStartedException("Container not started yet", null);
         }
     }
 }
