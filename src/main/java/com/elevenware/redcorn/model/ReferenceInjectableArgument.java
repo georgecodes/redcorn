@@ -33,7 +33,62 @@ public class ReferenceInjectableArgument implements InjectableArgument, Referenc
         if(payload == null) {
             throw new UnresolvableReferenceException(ref);
         }
-        this.type = payload.getClass();
+        if(type != null) {
+            payload = coerceToType(payload);
+        } else {
+            this.type = payload.getClass();
+        }
+    }
+
+    private Object coerceToType(Object payload) {
+        if(!CharSequence.class.isAssignableFrom(payload.getClass())) {
+            return payload;
+        }
+        String value = String.valueOf(payload);
+        if(type.equals(int.class)) {
+            return Integer.parseInt(value);
+        }
+        if(type.equals(boolean.class)) {
+           return Boolean.parseBoolean(value);
+        }
+        if(type.equals(short.class)) {
+            return Short.parseShort(value);
+        }
+        if(type.equals(long.class)) {
+            return Long.parseLong(value);
+        }
+        if(type.equals(float.class)) {
+            return Float.parseFloat(value);
+        }
+        if(type.equals(double.class)) {
+            return Double.parseDouble(value);
+        }
+        if(type.equals(char.class)) {
+            return value.charAt(0);
+        }
+        if(type.equals(Integer.class)) {
+            return Integer.valueOf(value);
+        }
+        if(type.equals(Boolean.class)) {
+            return Boolean.valueOf(value);
+        }
+        if(type.equals(Short.class)) {
+            return Short.valueOf(value);
+        }
+        if(type.equals(Long.class)) {
+            return Long.valueOf(value);
+        }
+        if(type.equals(Float.class)) {
+            return Float.valueOf(value);
+        }
+        if(type.equals(Double.class)) {
+            return Double.valueOf(value);
+        }
+        if(type.equals(Character.class)) {
+            return Character.valueOf(value.charAt(0));
+        }
+        return payload;
+
     }
 
     @Override

@@ -1,9 +1,10 @@
 package com.elevenware.redcorn.beans;
 
-import com.elevenware.redcorn.container.ContainerResolutionContext;
 import com.elevenware.redcorn.model.ReferenceResolutionContext;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class ResolvableDependencyInstantiationOrdering {
     private final List<BeanDefinition> beans;
@@ -28,7 +29,6 @@ public class ResolvableDependencyInstantiationOrdering {
         while(!beans.isEmpty()) {
             resolutionContext.initialise(sortedBeans);
 
-            List<Class<?>> currentlyReady = getTypesFrom(sortedBeans);
             if( i >= beans.size() ) {
                 i = 0;
             }

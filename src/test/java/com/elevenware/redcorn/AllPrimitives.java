@@ -12,6 +12,19 @@ public class AllPrimitives {
     private char theChar;
     private String theString;
 
+    public AllPrimitives() {}
+
+    public AllPrimitives(boolean theBoolean, short theShort, int theInt, long theLong, double theDouble, float theFloat, char theChar, String theString) {
+        this.theBoolean = theBoolean;
+        this.theShort = theShort;
+        this.theInt = theInt;
+        this.theLong = theLong;
+        this.theDouble = theDouble;
+        this.theFloat = theFloat;
+        this.theChar = theChar;
+        this.theString = theString;
+    }
+
     public boolean isTheBoolean() {
         return theBoolean;
     }

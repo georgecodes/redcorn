@@ -1,5 +1,6 @@
 package com.elevenware.redcorn.model;
 
+import com.elevenware.redcorn.beans.PrimitiveUtils;
 import com.elevenware.redcorn.model.ConstructorInjectionModel;
 
 import java.lang.reflect.Constructor;
@@ -41,11 +42,16 @@ public class ConstructorModel {
         }
         Iterator<Object> iter = constructorArgs.iterator();
         for(Class clazz: constructor.getParameterTypes()) {
-            if(!clazz.isAssignableFrom(iter.next().getClass())) {
+            Class next = iter.next().getClass();
+            if(!classesMatch(clazz, next)) {
                return false;
             }
         }
         return true;
+    }
+
+    private boolean isMappedPrimitive(Class clazz, Class next) {
+        return PrimitiveUtils.areBothSamePrimitive(clazz, next);
     }
 
     private boolean isSuitableForClasses(Constructor constructor, Collection<Class<?>> classes) {
@@ -54,11 +60,18 @@ public class ConstructorModel {
         }
         Iterator<Class<?>> iter = classes.iterator();
         for(Class clazz: constructor.getParameterTypes()) {
-            if(!clazz.isAssignableFrom(iter.next())) {
+            if(!classesMatch(clazz, iter.next())) {
                 return false;
             }
         }
         return true;
+    }
+
+    private boolean classesMatch(Class clazz, Class<?> next) {
+        if(clazz.isAssignableFrom(next)) {
+            return true;
+        }
+        return isMappedPrimitive(clazz, next);
     }
 
     public void assertHasConstructorFor(List<Object> constructorArgs) {

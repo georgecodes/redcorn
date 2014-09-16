@@ -1,5 +1,6 @@
 package com.elevenware.redcorn.constructors;
 
+import com.elevenware.redcorn.AllPrimitives;
 import com.elevenware.redcorn.DependentBean;
 import com.elevenware.redcorn.SimpleBean;
 import com.elevenware.redcorn.model.ConstructorModel;
@@ -115,6 +116,25 @@ public class TestConstructorModel {
         ConstructorModel constructorModel = new ConstructorModel(DependentBean.class);
 
         assertTrue(constructorModel.hasConstructorFor(injectionModel));
+
+    }
+
+    @Test
+    public void findsConstructorWhenSuppliedArgsArePrimitive() {
+
+        ConstructorModel model = new ConstructorModel(AllPrimitives.class);
+        List<Object> args = new ArrayList<>();
+        args.add(new Boolean(true));
+        args.add(Short.valueOf("39"));
+        args.add(Integer.valueOf("69"));
+        args.add(Long.valueOf("48539"));
+        args.add(Double.valueOf("37473.27264"));
+        args.add(Float.valueOf("4894.5833"));
+        args.add(Character.valueOf('s'));
+        args.add("string");
+
+        Constructor constructor = model.findConstructorFor(args);
+        assertNotNull(constructor);
 
     }
 
