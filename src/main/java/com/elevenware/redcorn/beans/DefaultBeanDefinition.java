@@ -33,10 +33,10 @@ public class DefaultBeanDefinition implements BeanDefinition {
         this.type = clazz;
         this.name = name;
         this.constructorModel = new ConstructorModel(clazz);
-        this.constructorArgs = new ArrayList<>();
-        this.namedConstructorRefs = new ArrayList<>();
-        this.referenceProperties = new ArrayList<>();
-        this.properties = new HashMap<>();
+        this.constructorArgs = new ArrayList<Object>();
+        this.namedConstructorRefs = new ArrayList<String>();
+        this.referenceProperties = new ArrayList<String>();
+        this.properties = new HashMap<String, Object>();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class TestConstructorInstantiation {
     }
 
     private Collection<BeanDefinition> toList(BeanDefinition dependency) {
-        Collection<BeanDefinition> list = new ArrayList<>();
+        Collection<BeanDefinition> list = new ArrayList<BeanDefinition>();
         list.add(dependency);
         return list;
     }

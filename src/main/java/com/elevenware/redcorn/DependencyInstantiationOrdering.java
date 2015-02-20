@@ -17,7 +17,7 @@ public class DependencyInstantiationOrdering {
     }
 
     public List<Holder> getGreedyConstructorsFrom(List<BeanDefinition> beans, List<Class<?>> allTypes) {
-        List<Holder> constructors  = new ArrayList<>();
+        List<Holder> constructors  = new ArrayList<Holder>();
         for(BeanDefinition bean: beans) {
             ConstructorModel model = bean.getConstructorModel();
             constructors.add(new Holder(model.findBestConstructorsForTypes(allTypes, bean.getConstructorArgs()), bean));
@@ -26,7 +26,7 @@ public class DependencyInstantiationOrdering {
     }
 
     private List<Class<?>> getTypesFrom(List<BeanDefinition> beans) {
-        List<Class<?>> types = new ArrayList<>();
+        List<Class<?>> types = new ArrayList<Class<?>>();
         for(BeanDefinition bean: beans) {
             types.add(bean.getType());
         }
@@ -35,7 +35,7 @@ public class DependencyInstantiationOrdering {
 
     public List<BeanDefinition> sort() {
         List<Class<?>> allTypes = getTypesFrom(beans);
-        List<BeanDefinition> sortedBeans = new ArrayList<>();
+        List<BeanDefinition> sortedBeans = new ArrayList<BeanDefinition>();
         assertAllSatisfiable(beans, allTypes);
         List<Holder> holders = getGreedyConstructorsFrom(beans, allTypes);
         Iterator<Holder> iter = holders.iterator();

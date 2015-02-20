@@ -10,7 +10,9 @@ public class ConstructorModel {
     private static final Comparator<? super Constructor> SORT_BY_ARGS = new Comparator<Constructor>() {
         @Override
         public int compare(Constructor o1, Constructor o2) {
-            return Integer.compare(o2.getParameterTypes().length, o1.getParameterTypes().length);
+            Integer o1Length = Integer.valueOf(o1.getParameterTypes().length);
+            Integer o2Length = Integer.valueOf(o2.getParameterTypes().length);
+            return o2Length.compareTo(o1Length);
         }
     };
     private final Class type;
@@ -18,7 +20,7 @@ public class ConstructorModel {
 
     public ConstructorModel(Class clazz) {
         this.type = clazz;
-       constructors = new ArrayList<>();
+       constructors = new ArrayList<Constructor>();
        for(Constructor constructor: clazz.getDeclaredConstructors()) {
             constructors.add(constructor);
        }
@@ -61,7 +63,7 @@ public class ConstructorModel {
     }
 
     public List<Constructor> findConstructorsForTypes(List<Class<?>> classes) {
-        List<Constructor> constructorList = new ArrayList<>();
+        List<Constructor> constructorList = new ArrayList<Constructor>();
         for(Constructor constructor: constructors) {
             if(hasAllTypes(constructor, classes)) {
                 constructorList.add(constructor);
@@ -94,7 +96,7 @@ public class ConstructorModel {
 
 
         public Constructor findBestConstructorsForTypes(List<Class<?>> classes, List<Object> args) {
-        List<Class<?>> actualClasses = new ArrayList<>(classes);
+        List<Class<?>> actualClasses = new ArrayList<Class<?>>(classes);
         for(Object object: args) {
             actualClasses.add(object.getClass());
         }

@@ -19,8 +19,8 @@ public class ConstructorInjectionRedcornContainer implements RedcornContainer {
     private Map<String, BeanDefinition> context;
 
     public ConstructorInjectionRedcornContainer() {
-        registeredTypes = new ArrayList<>();
-        context = new HashMap<>();
+        registeredTypes = new ArrayList<BeanDefinition>();
+        context = new HashMap<String, BeanDefinition>();
         log.trace("Container created - " + this);
     }
 

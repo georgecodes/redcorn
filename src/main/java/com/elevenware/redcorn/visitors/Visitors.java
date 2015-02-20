@@ -40,8 +40,8 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                 }
                ConstructorModel model = definition.getConstructorModel();
 
-                List<Class<?>> types = new ArrayList<>();
-                Map<String, BeanDefinition> resolvedBeans = new HashMap<>();
+                List<Class<?>> types = new ArrayList<Class<?>>();
+                Map<String, BeanDefinition> resolvedBeans = new HashMap<String, BeanDefinition>();
                 for(BeanDefinition dependency: existing.getBeanDefinitions()) {
                     types.add(dependency.getType());
                     resolvedBeans.put(dependency.getName(), dependency);
@@ -61,7 +61,7 @@ public abstract class Visitors implements BeanDefinitionVisitor {
                 if( best != null ) {
 
                     for(Class type: best.getParameterTypes()) {
-                        List<BeanDefinition> potential = new ArrayList<>();
+                        List<BeanDefinition> potential = new ArrayList<BeanDefinition>();
                         for(BeanDefinition def: existing.getBeanDefinitions()) {
                             if(type.isAssignableFrom(def.getType())) {
                                 potential.add(def);

@@ -60,11 +60,11 @@ public class TestConstructorModel {
 
     @Test
     public void includeProvidedConstructorArgs() {
-        List<Class<?>> classes = new ArrayList<>();
+        List<Class<?>> classes = new ArrayList<Class<?>>();
         classes.add(SimpleBean.class);
         classes.add(List.class);
         ConstructorModel model = new ConstructorModel(DependentBean.class);
-        List<Object> args = new ArrayList<>();
+        List<Object> args = new ArrayList<Object>();
         args.add("hello");
         Constructor constructors = model.findBestConstructorsForTypes(classes, args);
         assertEquals(2, constructors.getParameterTypes().length);

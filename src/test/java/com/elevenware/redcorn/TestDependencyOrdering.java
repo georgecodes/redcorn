@@ -19,7 +19,7 @@ public class TestDependencyOrdering {
     @Test
     public void ordering() {
 
-        List<BeanDefinition> beans = new ArrayList<>();
+        List<BeanDefinition> beans = new ArrayList<BeanDefinition>();
 
         beans.add(new DefaultBeanDefinition(HelloWorldApplication.class));
         beans.add(new DefaultBeanDefinition(MessageFactoryImpl.class));
@@ -39,7 +39,7 @@ public class TestDependencyOrdering {
     @Test
     public void orderingWhenNamedConstructorArgs() {
 
-        List<BeanDefinition> beans = new ArrayList<>();
+        List<BeanDefinition> beans = new ArrayList<BeanDefinition>();
 
         BeanDefinition base = new DefaultBeanDefinition(HasNamedBeanArg.class, "hasNamedBean").addConstructorRef("second");
         BeanDefinition first = new DefaultBeanDefinition(NamedBean.class, "first").addContructorArg("first bean");
@@ -61,7 +61,7 @@ public class TestDependencyOrdering {
     @Test
     public void weirdBugInGribble() {
 
-        List<BeanDefinition> beans = new ArrayList<>();
+        List<BeanDefinition> beans = new ArrayList<BeanDefinition>();
 
         BeanDefinition bazHandler = new DefaultBeanDefinition(BazHandler.class, "bazHandler")
                 .addConstructorRef("config")
